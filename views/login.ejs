@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="header">
+    <div class="header-logo">Flash Mob</a>
+  </div>
+  <div class="login">
+    <h1>Log in!</h1>
+    <form action="/login" method="POST">
+      <div>
+        <label for="username">Email</label>
+        <input type="email" name="username" required>
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input type="password" name="password" required>
+      </div>
+      <input type="submit" id="submit">
+    </form>
+    <% if (locals.error == true) { %>
+      <ul>
+        <li>Invalid email or password!</li>
+      </ul>
+    <% } %>
+  </div>
+</body>
+</html>
