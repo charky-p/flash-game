@@ -1,0 +1,19 @@
+{
+  "name": "flash",
+  "version": "1.0.0",
+  "description": "A browser extension to track sleep, team up with your friends to be accountable and improve your sleep schedule.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/charky-p/flash-game.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/charky-p/flash-game/issues"
+  },
+  "homepage": "https://github.com/charky-p/flash-game#readme"
+}
