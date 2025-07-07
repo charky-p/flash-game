@@ -10,7 +10,7 @@ function loginUser(name, password) {
     // Check if user has not been registered
     const user = data.users.find(user => user.name === name);
     if (!user) {
-        const newUser = { name: name, password: password, group: null };
+        const newUser = { name: name, password: password, group: null, xp: 0 };
         data.users.push(newUser);
         return newUser;
     } else if (password === user.password) {
@@ -71,6 +71,23 @@ function getPlayerGroupName(userName) {
     return groupName;
 }
 
+function getXp(userName) {
+    const user = db.users.find(user => user.name === userName);
+    return user.xp;
+}
+
+function getLeaderboard(groupName) {
+    const group = db.groups.find(group => group.groupName === groupName);
+    if (group) {
+        const leaderboard = group.users.map((username) => ({
+            xp: getXp(username),
+            name: username
+        }));
+        leaderboard.sort((a, b) => b.xp - a.xp);
+        return leaderboard;
+    }
+    return null;
+}
 /**
  *
  */
@@ -78,5 +95,6 @@ module.exports = {
     loginUser,
     createGroup,
     joinGroup,
-    getPlayerGroupName
+    getPlayerGroupName,
+    getLeaderboard
 }
