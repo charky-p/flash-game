@@ -51,11 +51,16 @@ app.use('/group', (req, res, next) => {
 });
 
 app.get('/group/dashboard', (req, res) => {
-    const playerGroup = main.getPlayerGroupName(req.session.user);
-    if (!playerGroup) {
+    const groupName = main.getPlayerGroupName(req.session.user);
+    if (!groupName) {
         res.redirect('/group/join');
     } else {
-        res.render('dashboard', playerGroup);
+		console.log(`groupName is ${groupName}`);
+        res.render('dashboard',
+		{
+			username: req.session.user,
+			leaderboard: main.getLeaderboard(groupName)
+		});
     }
 });
 
@@ -65,6 +70,7 @@ app.get('/group/join', (req, res) => {
 
 app.post('/group/join', (req, res) => {
     if (main.joinGroup(req.body.groupCode, req.session.user)) {
+		console.log('Joining group ' + JSON.stringify(req.body.groupCode));
         res.json({ redirectUrl: '/group/dashboard' });
     } else {
 		console.log(`Joining group failed`);
