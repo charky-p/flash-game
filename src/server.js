@@ -30,7 +30,7 @@ app.get('/viewdata', (req, res) => {
     res.send(getData());
 })
 app.get('/', (req, res) => {
-    res.render('login', {error: false});
+    res.render('login');
 });
 
 app.post('/login', (req, res) => {
@@ -38,8 +38,10 @@ app.post('/login', (req, res) => {
 
     if (main.loginUser(username, password) != null ) {
         req.session.user = username;
-        res.redirect('/group/dashboard');
-    }
+        res.json({success: true});
+    } else {
+		res.json({success: false});
+	}
 });
 
 app.use('/group', (req, res, next) => {
