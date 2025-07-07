@@ -37,7 +37,7 @@ app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
     if (main.loginUser(username, password) != null ) {
-        req.session.user =  { username };
+        req.session.user = username;
         res.redirect('/group/dashboard');
     }
 });
@@ -55,28 +55,33 @@ app.get('/group/dashboard', (req, res) => {
     if (!playerGroup) {
         res.redirect('/group/join');
     } else {
-        res.render('dashboard', group);
+        res.render('dashboard', playerGroup);
     }
 });
 
 app.get('/group/join', (req, res) => {
-    res.render('nogroup', {status: 0 });
+    res.render('nogroup');
 });
 
 app.post('/group/join', (req, res) => {
-    if (main.joinGroup()) {
-        res.redirect('/group/dashboard');
+    if (main.joinGroup(req.body.groupCode, req.session.user)) {
+        res.json({ redirectUrl: '/group/dashboard' });
     } else {
-        res.render('nogroup', { status: 1 });
+		console.log(`Joining group failed`);
+
+        res.json({ redirectUrl : null });
     }
 });
 
 app.post('/group/create', (req, res) => {
     const { groupName } = req.body;
 	if (main.createGroup(groupName, req.session.user)) {
-		res.redirect('/group/dashboard');
+
+		res.json({ redirectUrl: '/group/dashboard'});
 	} else {
-		res.render('nogroup', { status: 2 });
+		console.log(`Creating group failed`);
+		res.json({ redirectUrl : null });
+
 	}
 });
 
