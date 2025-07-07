@@ -1,10 +1,10 @@
-import { getData } from './dataStore';
+const { getData } = require('./dataStore');
 
 /**
- * Login/register user 
+ * Login/register user
  * @returns null if invalid login, otherwise the user
  */
-export function loginUser(name, password) {
+function loginUser(name, password) {
     const data = getData();
 
     // Check if user has not been registered
@@ -21,7 +21,7 @@ export function loginUser(name, password) {
     return null;
 }
 
-export function createGroup(req, res) {
+function createGroup(req, res) {
     const db = getData();
     const { groupName, userName } = req.body;
 
@@ -41,7 +41,7 @@ export function createGroup(req, res) {
  * @param {*} res 
  * @returns 
  */
-export function joinGroup(req, res) {
+function joinGroup(req, res) {
     const db = getData();
     const { groupName, userName } = req.body;
 
@@ -52,4 +52,10 @@ export function joinGroup(req, res) {
     } else {
         return false;
     }
+}
+
+module.exports = {
+    loginUser,
+    createGroup,
+    joinGroup
 }

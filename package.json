@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/charky-p/flash-game/issues"
   },
-  "homepage": "https://github.com/charky-p/flash-game#readme"
+  "homepage": "https://github.com/charky-p/flash-game#readme",
+  "keywords": [],
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0"
+  }
 }

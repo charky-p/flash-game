@@ -25,4 +25,4 @@ function getData() {
     return data;
 }
 
-export { getData };
+module.exports = { getData };
