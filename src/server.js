@@ -51,11 +51,11 @@ app.use('/group', (req, res, next) => {
 });
 
 app.get('/group/dashboard', (req, res) => {
-    const playerGroup = main.getGroup(req.session.user);
+    const playerGroup = main.getPlayerGroupName(req.session.user);
     if (!playerGroup) {
         res.redirect('/group/join');
     } else {
-        res.render('');
+        res.render('dashboard', group);
     }
 });
 

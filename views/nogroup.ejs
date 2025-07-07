@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2d1b69 0%, #1a0f3d 50%, #0f0722 100%);
+            min-height: 100vh;
+            color: #e8e4f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Subtle background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(75, 0, 130, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            padding: 40px 30px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 50px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .group-code-section {
+            margin-bottom: 20px;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .group-code-section.show {
+            max-height: 200px;
+            opacity: 1;
+            margin-bottom: 40px;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .group-code-input {
+            width: 100%;
+            padding: 20px 25px;
+            font-size: 18px;
+            background: rgba(138, 43, 226, 0.1);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 15px;
+            color: #e8e4f0;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .group-code-input::placeholder {
+            color: rgba(232, 228, 240, 0.6);
+        }
+
+        .group-code-input:focus {
+            outline: none;
+            border-color: #8a2be2;
+            background: rgba(138, 43, 226, 0.2);
+            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.3);
+        }
+
+        .buttons-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .btn {
+            padding: 20px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-join {
+            background: linear-gradient(45deg, #6a4c93, #8b5a9f);
+            color: white;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+        }
+
+        .btn-join:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+            background: linear-gradient(45deg, #7b5aa6, #9d6bb2);
+        }
+
+        .btn-join.active {
+            background: linear-gradient(45deg, #7b5aa6, #9d6bb2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+        }
+
+        .btn-create {
+            background: linear-gradient(45deg, #8a2be2, #9932cc);
+            color: white;
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+        }
+
+        .btn-create:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(138, 43, 226, 0.5);
+            background: linear-gradient(45deg, #9932cc, #a642db);
+        }
+
+        .btn-create.active {
+            background: linear-gradient(45deg, #9932cc, #a642db);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(138, 43, 226, 0.5);
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            color: white;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+            border: 2px solid rgba(46, 204, 113, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+            background: linear-gradient(45deg, #27ae60, #229954);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 20px;
+            }
+            
+            .title {
+                font-size: 28px;
+                margin-bottom: 40px;
+            }
+            
+            .group-code-input {
+                padding: 16px 20px;
+                font-size: 16px;
+            }
+            
+            .btn {
+                padding: 16px 25px;
+                font-size: 16px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">You are not in a group yet</h1>
+        
+        <div class="group-code-section">
+            <input type="text" class="group-code-input" placeholder="Enter group code" id="groupInput">
+        </div>
+        
+        <div class="buttons-section">
+            <button class="btn btn-join" id="joinGroupBtn" onclick="toggleGroupAction('join')">Join Group</button>
+            <button class="btn btn-create" id="createGroupBtn" onclick="toggleGroupAction('create')">Create Group</button>
+        </div>
+    </div>
+
+    <script>
+        let currentAction = null; // 'join' or 'create'
+
+        function toggleGroupAction(action) {
+            const groupCodeSection = document.querySelector('.group-code-section');
+            const groupInput = document.getElementById('groupInput');
+            const joinBtn = document.getElementById('joinGroupBtn');
+            const createBtn = document.getElementById('createGroupBtn');
+
+            // Reset any active states and input value
+            resetButtons();
+
+            if (currentAction === action) {
+                // If the same button is clicked again, hide the input and reset
+                resetGroupForm();
+            } else {
+                currentAction = action;
+                groupCodeSection.classList.add('show');
+                
+                if (action === 'join') {
+                    groupInput.placeholder = 'Enter group code';
+                    joinBtn.textContent = 'Submit';
+                    joinBtn.classList.add('submit-btn', 'active');
+                    joinBtn.onclick = submitGroupJoin;
+                } else if (action === 'create') {
+                    groupInput.placeholder = 'Enter group name';
+                    createBtn.textContent = 'Submit';
+                    createBtn.classList.add('submit-btn', 'active');
+                    createBtn.onclick = submitGroupCreate;
+                }
+
+                setTimeout(() => {
+                    groupInput.focus();
+                }, 300);
+            }
+        }
+
+        function submitGroupJoin() {
+            const groupCode = document.getElementById('groupInput').value.trim();
+            if (!groupCode) {
+                alert('Please enter a group code');
+                return;
+            }
+            console.log('Joining group with code:', groupCode);
+            alert('Joining group: ' + groupCode);
+            resetGroupForm();
+        }
+
+        function submitGroupCreate() {
+            const groupName = document.getElementById('groupInput').value.trim();
+            if (!groupName) {
+                alert('Please enter a group name');
+                return;
+            }
+            console.log('Creating group with name:', groupName);
+            alert('Creating new group: ' + groupName);
+            resetGroupForm();
+        }
+
+        function resetGroupForm() {
+            const groupCodeSection = document.querySelector('.group-code-section');
+            const groupInput = document.getElementById('groupInput');
+            
+            groupCodeSection.classList.remove('show');
+            groupInput.value = '';
+            currentAction = null;
+            resetButtons();
+        }
+
+        function resetButtons() {
+            const joinBtn = document.getElementById('joinGroupBtn');
+            const createBtn = document.getElementById('createGroupBtn');
+
+            joinBtn.textContent = 'Join Group';
+            joinBtn.classList.remove('submit-btn', 'active');
+            joinBtn.classList.add('btn-join');
+            joinBtn.onclick = () => toggleGroupAction('join');
+
+            createBtn.textContent = 'Create Group';
+            createBtn.classList.remove('submit-btn', 'active');
+            createBtn.classList.add('btn-create');
+            createBtn.onclick = () => toggleGroupAction('create');
+        }
+
+        // Add enter key support for the input field
+        document.getElementById('groupInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && currentAction) {
+                if (currentAction === 'join') {
+                    submitGroupJoin();
+                } else if (currentAction === 'create') {
+                    submitGroupCreate();
+                }
+            }
+        });
+
+        // Add click outside to close functionality
+        document.addEventListener('click', function(e) {
+            const container = document.querySelector('.container');
+            if (currentAction && !container.contains(e.target)) {
+                resetGroupForm();
+            }
+        });
+    </script>
+</body>
+</html>

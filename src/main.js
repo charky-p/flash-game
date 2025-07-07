@@ -10,7 +10,7 @@ function loginUser(name, password) {
     // Check if user has not been registered
     const user = data.users.find(user => user.name === name);
     if (!user) {
-        const newUser = { name: name, password: password };
+        const newUser = { name: name, password: password, group: null };
         data.users.push(newUser);
         return newUser;
     } else if (password === user.password) {
@@ -21,10 +21,8 @@ function loginUser(name, password) {
     return null;
 }
 
-function createGroup(req, res) {
+function createGroup(groupName, userName) {
     const db = getData();
-    const { groupName, userName } = req.body;
-
     if (db.groups.find(group => group.groupName === groupName)) {
         return null;
     } else if (db.users.find(user => user.name === userName)) {
@@ -37,14 +35,12 @@ function createGroup(req, res) {
 
 /**
  * Boolean for if user can or did join the group
- * @param {*} req 
- * @param {*} res 
- * @returns 
+ * @param {*} groupName
+ * @param {*} userName
+ * @returns
  */
-function joinGroup(req, res) {
+function joinGroup(groupName, userName) {
     const db = getData();
-    const { groupName, userName } = req.body;
-
     const group = db.groups.find(group => group.groupName === groupName);
     if (group && group.users.find(user => user === userName)) {
         group.users.push(userName);
@@ -54,8 +50,24 @@ function joinGroup(req, res) {
     }
 }
 
+/**
+ * Function for fetching group name player belongs to
+ */
+function getPlayerGroupName(userName) {
+    const db = getData();
+    const user = db.users.find(user => user === userName);
+    if (!user) {
+        return null;
+    }
+    const group = db.groups.find(group => group.groupName === user.group);
+    return group;
+}
+/**
+ *
+ */
 module.exports = {
     loginUser,
     createGroup,
-    joinGroup
+    joinGroup,
+    getPlayerGroupName
 }
