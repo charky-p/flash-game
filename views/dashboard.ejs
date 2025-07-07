@@ -323,8 +323,8 @@
                   <% leaderboard.forEach((player, index) => { %>
                       <% let rankClass = 'default'; %>
                       <% if (index === 0) rankClass = 'gold'; %>
-                      <% else if (index === 1) rankClass = 'silver'; %>
-                      <% else if (index === 2) rankClass = 'bronze'; %>
+                      <% if (index === 1) rankClass = 'silver'; %>
+                      <% if (index === 2) rankClass = 'bronze'; %>
 
                       <tr class="leaderboard-row">
                           <td class="rank <%= rankClass %>">#<%= index + 1 %></td>
@@ -353,7 +353,7 @@
                     <div class="profile-field">
                         <span class="profile-label">Rank:</span>
                         <span class="profile-value">
-                          <%= leaderboard.findIndex(p => p.name === username).toLocaleString()%>
+                          <%= (leaderboard.findIndex(p => p.name === username) + 1).toLocaleString()%>
                         </span>
                     </div>
                 </div>

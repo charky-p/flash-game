@@ -49,11 +49,13 @@ function createGroup(groupName, userName) {
 function joinGroup(groupName, userName) {
     const db = getData();
     const group = db.groups.find(group => group.groupName === groupName);
-    if (group && db.users.find(user => user.name === userName)) {
+    const user = db.users.find(user => user.name === userName);
+    if (group && user) {
         group.users.push(userName);
+        user.group = groupName;
         return true;
     } else {
-        console.log(`group is ${group} and user is ${db.users.find(user => user === userName)}`);
+        console.log(`group is ${group} and user is ${user}`);
         return false;
     }
 }
@@ -67,23 +69,31 @@ function getPlayerGroupName(userName) {
     if (!user) {
         return null;
     }
-    const groupName = db.groups.find(group => group.groupName === user.group);
-    return groupName;
+    const group = db.groups.find(group => group.groupName === user.group);
+    if (!group) {
+        return null;
+    }
+    return group.groupName;
 }
 
 function getXp(userName) {
+    const db = getData();
     const user = db.users.find(user => user.name === userName);
     return user.xp;
 }
 
 function getLeaderboard(groupName) {
+    const db = getData();
     const group = db.groups.find(group => group.groupName === groupName);
+    console.log(`group is ${JSON.stringify(group)}`);
+
     if (group) {
         const leaderboard = group.users.map((username) => ({
             xp: getXp(username),
             name: username
         }));
         leaderboard.sort((a, b) => b.xp - a.xp);
+        console.log(`leaderboard is ${JSON.stringify(leaderboard)}`);
         return leaderboard;
     }
     return null;
