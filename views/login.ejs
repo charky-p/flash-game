@@ -14,8 +14,8 @@
     <h1>Log in!</h1>
     <form action="/login" method="POST">
       <div>
-        <label for="username">Email</label>
-        <input type="email" name="username" required>
+        <label for="username">Username</label>
+        <input type="text" name="username" required>
       </div>
       <div>
         <label for="password">Password</label>
@@ -25,7 +25,7 @@
     </form>
     <% if (locals.error == true) { %>
       <ul>
-        <li>Invalid email or password!</li>
+        <li>Invalid username or password!</li>
       </ul>
     <% } %>
   </div>
