@@ -179,6 +179,23 @@
             background: linear-gradient(45deg, #27ae60, #229954);
         }
 
+        /* Message styling */
+        .message {
+            color: #ffcccc; /* Light red for error messages */
+            font-size: 16px;
+            margin-top: 15px;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: opacity 0.3s ease, max-height 0.3s ease;
+        }
+
+        .message.show {
+            opacity: 1;
+            max-height: 50px; /* Adjust as needed */
+        }
+
+
         /* Responsive design */
         @media (max-width: 768px) {
             .container {
@@ -248,10 +265,26 @@
             <button class="btn btn-join" id="joinGroupBtn" onclick="toggleGroupAction('join')">Join Group</button>
             <button class="btn btn-create" id="createGroupBtn" onclick="toggleGroupAction('create')">Create Group</button>
         </div>
+
+        <p class="message" id="feedbackMessage"></p>
     </div>
 
     <script>
         let currentAction = null; // 'join' or 'create'
+        const feedbackMessage = document.getElementById('feedbackMessage'); // Get the message element
+
+        function showMessage(msg, isError = true) {
+            feedbackMessage.textContent = msg;
+            feedbackMessage.classList.add('show');
+            // You can add different classes for error vs success if needed for styling
+            // e.g., feedbackMessage.classList.toggle('error', isError);
+            // setTimeout(() => { hideMessage(); }, 5000); // Optional: hide after a few seconds
+        }
+
+        function hideMessage() {
+            feedbackMessage.classList.remove('show');
+            feedbackMessage.textContent = ''; // Clear content when hidden
+        }
 
         function toggleGroupAction(action) {
             const groupCodeSection = document.querySelector('.group-code-section');
@@ -259,8 +292,9 @@
             const joinBtn = document.getElementById('joinGroupBtn');
             const createBtn = document.getElementById('createGroupBtn');
 
-            // Reset any active states and input value
+            // Reset any active states and input value, and hide message
             resetButtons();
+            hideMessage(); // Hide message on new action or toggle
 
             if (currentAction === action) {
                 // If the same button is clicked again, hide the input and reset
@@ -287,26 +321,68 @@
             }
         }
 
-        function submitGroupJoin() {
+        async function submitGroupJoin() {
             const groupCode = document.getElementById('groupInput').value.trim();
             if (!groupCode) {
-                alert('Please enter a group code');
+                showMessage('Please enter a group code');
                 return;
             }
-            console.log('Joining group with code:', groupCode);
-            alert('Joining group: ' + groupCode);
-            resetGroupForm();
+            console.log('Attempting to join group with code:', groupCode);
+            // alert('Joining group: ' + groupCode); // Remove user-facing alert
+            hideMessage(); // Hide any previous message before new submission
+
+            try {
+                const response = await fetch('/group/join', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ groupCode }),
+                });
+
+                const data = await response.json();
+                
+                if (data.redirectUrl) {
+                    window.location.href = data.redirectUrl;
+                } else {
+                    // Assuming data.message contains the error reason from the server
+                    showMessage('Group name does not exist. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error joining group:', error);
+                showMessage('An error occurred while trying to join the group.');
+            }
+            // Do not call resetGroupForm immediately after fetch, wait for redirect or error message
         }
 
-        function submitGroupCreate() {
+        async function submitGroupCreate() {
             const groupName = document.getElementById('groupInput').value.trim();
             if (!groupName) {
-                alert('Please enter a group name');
+                showMessage('Please enter a group name');
                 return;
             }
-            console.log('Creating group with name:', groupName);
-            alert('Creating new group: ' + groupName);
-            resetGroupForm();
+            console.log('Attempting to create group with name:', groupName);
+            // alert('Creating new group: ' + groupName); // Remove user-facing alert
+            hideMessage(); // Hide any previous message before new submission
+
+            try {
+                const response = await fetch('/group/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ groupName }),
+                });
+
+                const data = await response.json();
+
+                if (data.redirectUrl) {
+                    window.location.href = data.redirectUrl;
+                } else {
+                    // Assuming data.message contains the error reason from the server
+                    showMessage('Group name already exists. Please choose another name.');
+                }
+            } catch (error) {
+                console.error('Error creating group:', error);
+                showMessage('An error occurred while trying to create the group.');
+            }
+            // Do not call resetGroupForm immediately after fetch, wait for redirect or error message
         }
 
         function resetGroupForm() {
@@ -317,6 +393,7 @@
             groupInput.value = '';
             currentAction = null;
             resetButtons();
+            hideMessage(); // Ensure message is hidden when form is reset
         }
 
         function resetButtons() {
@@ -348,7 +425,12 @@
         // Add click outside to close functionality
         document.addEventListener('click', function(e) {
             const container = document.querySelector('.container');
-            if (currentAction && !container.contains(e.target)) {
+            // Check if the click is outside the container AND if an action is active
+            // We also ensure it's not the feedback message itself being clicked, or the input/buttons.
+            if (currentAction && !container.contains(e.target) && e.target !== feedbackMessage && 
+                e.target !== document.getElementById('groupInput') &&
+                e.target !== document.getElementById('joinGroupBtn') &&
+                e.target !== document.getElementById('createGroupBtn')) {
                 resetGroupForm();
             }
         });
