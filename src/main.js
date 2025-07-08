@@ -51,7 +51,7 @@ const { getData } = require('./dataStore');
         const db = getData();
         const group = db.groups.find(group => group.groupName === groupName);
         const user = db.users.find(user => user.name === userName);
-        if (group && user) {
+        if (group && user && !group.users.includes(userName)) {
             group.users.push(userName);
             user.group = groupName;
             return true;
@@ -137,8 +137,11 @@ const { getData } = require('./dataStore');
 
                 const flashcardIds = user.flashcardAttempts.map(fc => fc.flashcardId);
                 console.log(`flashcardIds`, JSON.stringify(flashcardIds));
+                console.log(`group.flashcards`, JSON.stringify(group.flashcards));
                 const filteredFlashcards = group.flashcards.filter(flashcard => !flashcardIds.includes(flashcard.flashcardId));
-                return filteredFlashcards.map(f => f.flaschardId);
+                console.log(`group.flashcards`, JSON.stringify(filteredFlashcards));
+
+                return filteredFlashcards.map(f => f.flashcardId);
             }
         }
 
