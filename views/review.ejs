@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2d1b69 0%, #1a0f3d 50%, #0f0722 100%);
+            min-height: 100vh;
+            color: #e8e4f0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Subtle background pattern for focus */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(75, 0, 130, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .back-button {
+            background: linear-gradient(45deg, #6a4c93, #8b5a9f);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+            border: 1px solid rgba(138, 43, 226, 0.5);
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+            background: linear-gradient(45deg, #7b5aa6, #9d6bb2);
+        }
+
+        .quiz-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            width: 100%;
+        }
+
+        .question-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .question-number {
+            font-size: 18px;
+            color: #b19cd9;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .question-text {
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 1.4;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .answers-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 50px;
+        }
+
+        .answer-option {
+            background: rgba(138, 43, 226, 0.1);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 15px;
+            padding: 20px 25px;
+            font-size: 18px;
+            color: #e8e4f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            backdrop-filter: blur(5px);
+            overflow: hidden;
+        }
+
+        .answer-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .answer-option:hover::before {
+            left: 100%;
+        }
+
+        .answer-option:hover {
+            transform: translateX(10px);
+            border-color: rgba(138, 43, 226, 0.6);
+            background: rgba(138, 43, 226, 0.2);
+            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.3);
+        }
+
+        .answer-option.selected {
+            background: rgba(138, 43, 226, 0.3);
+            border-color: #8a2be2;
+            color: white;
+            transform: translateX(10px);
+            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.4);
+        }
+
+        .answer-option.correct {
+            background: rgba(46, 204, 113, 0.3);
+            border-color: #2ecc71;
+            color: white;
+        }
+
+        .answer-option.incorrect {
+            background: rgba(231, 76, 60, 0.3);
+            border-color: #e74c3c;
+            color: white;
+        }
+
+        .answer-option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: flex-end;
+            padding: 0 30px 30px;
+        }
+
+        .confirm-button {
+            background: linear-gradient(45deg, #8a2be2, #9932cc);
+            border: none;
+            padding: 15px 35px;
+            border-radius: 30px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            min-width: 150px;
+        }
+
+        .confirm-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(138, 43, 226, 0.5);
+            background: linear-gradient(45deg, #9932cc, #a642db);
+        }
+
+        .confirm-button:disabled {
+            background: rgba(138, 43, 226, 0.3);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .confirm-button.next {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+        }
+
+        .confirm-button.next:hover {
+            background: linear-gradient(45deg, #27ae60, #229954);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 20px 20px;
+            }
+            
+            .question-text {
+                font-size: 24px;
+            }
+            
+            .answer-option {
+                padding: 16px 20px;
+                font-size: 16px;
+            }
+            
+            .header {
+                padding: 15px 20px;
+            }
+        }
+
+        /* Focus animations */
+        .question-text {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .answer-option {
+            animation: fadeInLeft 0.6s ease-out;
+        }
+
+        .answer-option:nth-child(1) { animation-delay: 0.1s; }
+        .answer-option:nth-child(2) { animation-delay: 0.2s; }
+        .answer-option:nth-child(3) { animation-delay: 0.3s; }
+        .answer-option:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div></div>
+        <button class="back-button" onclick="goBack()">← Back</button>
+    </div>
+
+    <div class="quiz-container">
+        <div class="question-section">
+            <div class="question-number">Question 1 of 5</div>
+            <div class="question-text">What is the capital of France?</div>
+        </div>
+
+        <div class="answers-section">
+            <div class="answer-option" onclick="selectAnswer(0)">
+                A) London
+            </div>
+            <div class="answer-option" onclick="selectAnswer(1)">
+                B) Berlin
+            </div>
+            <div class="answer-option" onclick="selectAnswer(2)">
+                C) Paris
+            </div>
+            <div class="answer-option" onclick="selectAnswer(3)">
+                D) Madrid
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="confirm-button" id="confirmBtn" onclick="confirmAnswer()" disabled>
+            Confirm Answer
+        </button>
+    </div>
+
+    <script>
+        let selectedAnswer = null;
+        let isAnswerConfirmed = false;
+        let currentQuestion = 0;
+        const correctAnswer = 2; // Index of correct answer (Paris)
+
+        const questions = [
+            {
+                question: "What is the capital of France?",
+                answers: ["A) London", "B) Berlin", "C) Paris", "D) Madrid"],
+                correct: 2
+            },
+            {
+                question: "Which planet is known as the Red Planet?",
+                answers: ["A) Venus", "B) Mars", "C) Jupiter", "D) Saturn"],
+                correct: 1
+            },
+            {
+                question: "What is 2 + 2?",
+                answers: ["A) 3", "B) 4", "C) 5", "D) 6"],
+                correct: 1
+            }
+        ];
+
+        function selectAnswer(index) {
+            if (isAnswerConfirmed) return;
+
+            const options = document.querySelectorAll('.answer-option');
+            
+            // Remove previous selection
+            options.forEach(option => option.classList.remove('selected'));
+            
+            // Select new option
+            options[index].classList.add('selected');
+            selectedAnswer = index;
+            
+            // Enable confirm button
+            document.getElementById('confirmBtn').disabled = false;
+        }
+
+        function confirmAnswer() {
+            if (selectedAnswer === null || isAnswerConfirmed) return;
+
+            isAnswerConfirmed = true;
+            const options = document.querySelectorAll('.answer-option');
+            const confirmBtn = document.getElementById('confirmBtn');
+            const currentCorrect = questions[currentQuestion].correct;
+
+            // Disable all options
+            options.forEach(option => {
+                option.classList.add('disabled');
+                option.onclick = null;
+            });
+
+            // Show correct/incorrect answers
+            if (selectedAnswer === currentCorrect) {
+                options[selectedAnswer].classList.add('correct');
+            } else {
+                options[selectedAnswer].classList.add('incorrect');
+                options[currentCorrect].classList.add('correct');
+            }
+
+            // Change button to "Next Question"
+            confirmBtn.textContent = 'Next Question';
+            confirmBtn.classList.add('next');
+            confirmBtn.onclick = nextQuestion;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                loadQuestion(currentQuestion);
+            } else {
+                // Quiz completed
+                alert('Quiz completed!');
+            }
+        }
+
+        function loadQuestion(index) {
+            const question = questions[index];
+            const options = document.querySelectorAll('.answer-option');
+            const confirmBtn = document.getElementById('confirmBtn');
+
+            // Reset state
+            selectedAnswer = null;
+            isAnswerConfirmed = false;
+
+            // Update question
+            document.querySelector('.question-number').textContent = `Question ${index + 1} of ${questions.length}`;
+            document.querySelector('.question-text').textContent = question.question;
+
+            // Update answers
+            options.forEach((option, i) => {
+                option.textContent = question.answers[i];
+                option.className = 'answer-option';
+                option.onclick = () => selectAnswer(i);
+            });
+
+            // Reset button
+            confirmBtn.textContent = 'Confirm Answer';
+            confirmBtn.classList.remove('next');
+            confirmBtn.disabled = true;
+            confirmBtn.onclick = confirmAnswer;
+        }
+
+        function goBack() {
+            // Handle back button functionality
+            if (confirm('Are you sure you want to go back? Your progress will be lost.')) {
+                // In a real application, this would navigate to the previous page
+                window.history.back();
+            }
+        }
+    </script>
+</body>
+</html>

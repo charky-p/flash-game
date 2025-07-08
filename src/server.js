@@ -96,7 +96,43 @@ app.post('/group/create', (req, res) => {
 	}
 });
 
+app.get('/group/create-flashcard', (req, res) => {
+    res.render('post');
+});
 
+app.post('/group/create-flashcard', (req, res) => {
+    const { question, answers, correctAnswer } = req.body;
+    const flashcard = main.createFlashcard(question, answers, correctAnswer, req.session.user);
+    if (flashcard) {
+        res.json({ msg: 'Success' });
+    } else {
+        res.status(400).json({msg: 'Bad request'});
+    }
+});
 
+app.get('/group/review-flashcards', (req, res) => {
+    const flashcards = main.reviewFlashcard(req.session.user);
+    console.log(`flashcards are ${JSON.stringify(flashcards)}`);
+    if (flashcards && flashcards.length > 0) {
+        const randomIndex = Math.floor(Math.random() * flashcards.length);
+        res.redirect(`/group/review/${flashcards[randomIndex]}`);
+    } else {
+        res.redirect('/group/review-flashcards/done');
+    }
+});
+
+app.get('/group/review-flashcards/done', (req, res) => {
+    res.render('done');
+});
+
+app.get('/group/review/:id', (req, res) => {
+    const flashcardId = req.params.id;
+    const flashcard = main.getFlashcard(flashcardId, req.session.user);
+    if (flashcard) {
+        res.render('review', { question: flashcard.question, answers: flashcard.answers});
+    } else {
+        res.status(400).send('Uh oh');
+    }
+});
 
 
