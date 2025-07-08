@@ -58,7 +58,6 @@ app.get('/group/dashboard', (req, res) => {
         res.redirect('/group/join');
     } else {
 		console.log(`groupName is ${groupName}`);
-        main.resetStreak(req.session.user);
         const badges = main.getBadges(req.session.user);
         const leaderboard = main.getLeaderboard(groupName);
         main.addSkillDiffBadge(leaderboard, req.session.user);
