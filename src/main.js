@@ -214,6 +214,11 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
     }
 
     function addHotShotBadge(user) {
+        if (user.streak > 3 && !user.badges.includes("hot shot")) {
+            if (!user.flashcardAttempts.find(f => f.correct === false)) {
+                user.badges.push("hot shot");
+            }
+        }
         return;
     }
 

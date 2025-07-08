@@ -520,7 +520,13 @@
         <div class="section badges-section">
             <h2 class="section-title">Your Badges</h2>
             <div class="badges-container">
-                <div class="badge-item" id="badge-hot-shot" data-quest-id="hot-shot">
+                <div
+                    <% if (badges && badges.includes("hot shot")) { %>
+                        class="badge-item completed"
+                    <% } else { %>
+                        class="badge-item"
+                    <% } %>
+                id="badge-hot-shot" data-quest-id="hot-shot">
                     <div class="badge-icon">
                         🔥
                     </div>
@@ -606,21 +612,22 @@
 
         <!-- Quests Section -->
         <div class="section quests-section">
-            <h2 class="section-title">Your Quests</h2>
+            <h2 class="section-title">Current Quests</h2>
             <ul class="quest-list">
-                <li class="quest-item" data-quest-id="hot-shot">
+                <li class="quest-item <% if (badges && badges.includes('hot shot')) { %>completed<% } %>" data-quest-id="hot-shot">
                     <h3 class="quest-title">Hot Shot</h3>
-                    <p class="quest-description">Achieve a 4 streak on your first try.</p>
+                    <p class="quest-description">Achieve a 5 streak on your first try.</p>
                 </li>
-                <li class="quest-item" data-quest-id="helping-hand">
+                <li class="quest-item <% if (badges && badges.includes('helping hand')) { %>completed<% } %>" data-quest-id="helping-hand">
                     <h3 class="quest-title">Helping Hand</h3>
                     <p class="quest-description">Create 3 flashcards.</p>
                 </li>
-                <li class="quest-item" data-quest-id="skill-diff">
+                <li class="quest-item <% if (badges && badges.includes('skill diff')) { %>completed<% } %>" data-quest-id="skill-diff">
                     <h3 class="quest-title">Skill Diff</h3>
                     <p class="quest-description">Be first on the leaderboard by 50 XP.</p>
                 </li>
             </ul>
+
         </div>
     </div>
 </body>
