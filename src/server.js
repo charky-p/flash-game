@@ -128,7 +128,7 @@ app.get('/group/review-flashcards/done', (req, res) => {
 });
 
 app.get('/group/review/:id', (req, res) => {
-    const flashcardId = req.params.id;
+    const flashcardId = parseInt(req.params.id);
     const flashcard = main.getFlashcard(flashcardId, req.session.user);
     if (flashcard) {
         res.render('review', { question: flashcard.question, answers: flashcard.answers});
@@ -138,7 +138,7 @@ app.get('/group/review/:id', (req, res) => {
 });
 
 app.post('/group/review/:id/answer', (req, res) => {
-    const flashcardId = req.params.id;
+    const flashcardId = parseInt(req.params.id);
     const username = req.session.user;
     const { answer } = req.body;
     const correctAnswer = main.getAnswer(flashcardId, username);

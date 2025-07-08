@@ -137,7 +137,7 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
                     return now - attemptTime <= ONE_DAY;
                 });
 
-                const flashcardIds = user.flashcardAttempts.map(fc => fc.flashcardId);
+                const flashcardIds = user.flashcardAttempts.map(fc => parseInt(fc.flashcardId));
                 console.log(`flashcardIds`, JSON.stringify(flashcardIds));
                 console.log(`group.flashcards`, JSON.stringify(group.flashcards));
                 const filteredFlashcards = group.flashcards.filter(flashcard => !flashcardIds.includes(flashcard.flashcardId));
@@ -175,9 +175,13 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
     }
 
     function getFlashcard(flashcardId, userName) {
+        console.log('flashcardId is', flashcardId, 'type:', typeof flashcardId);
         const db = getData();
         const group = db.groups.find(group => group.users.includes(userName));
-        return group.flashcards.find(f => f.flashcardId = flashcardId);
+        console.log(`group is ${JSON.stringify(group)}`);
+        const val = group.flashcards.find(f => f.flashcardId === flashcardId);
+        console.log(`val is ${JSON.stringify(val)}`);
+        return val;
     }
 
     function getAnswer(flaschardId, userName) {
