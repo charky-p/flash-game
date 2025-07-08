@@ -60,10 +60,12 @@ app.get('/group/dashboard', (req, res) => {
 		console.log(`groupName is ${groupName}`);
         main.resetStreak(req.session.user);
         const badges = main.getBadges(req.session.user);
+        const leaderboard = main.getLeaderboard(groupName);
+        main.addSkillDiffBadge(leaderboard, req.session.user);
         res.render('dashboard',
 		{
 			username: req.session.user,
-			leaderboard: main.getLeaderboard(groupName),
+			leaderboard: leaderboard,
             badges: badges
 		});
     }

@@ -544,7 +544,13 @@
                     </div>
                     <span class="badge-name">Helping Hand</span>
                 </div>
-                <div class="badge-item" id="badge-skill-diff" data-quest-id="skill-diff">
+                <div
+                    <% if (badges && badges.includes("skill diff")) { %>
+                        class="badge-item completed"
+                    <% } else { %>
+                        class="badge-item"
+                    <% } %>
+                class="badge-item" id="badge-skill-diff" data-quest-id="skill-diff">
                     <div class="badge-icon">
                         👑
                     </div>

@@ -99,7 +99,7 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
             }));
             leaderboard.sort((a, b) => b.xp - a.xp);
             console.log(`leaderboard is ${JSON.stringify(leaderboard)}`);
-            return leaderboard;
+            return leaderboard.slice(0, 10);
         }
         return null;
     }
@@ -131,7 +131,7 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
         const user = db.users.find(user => user.name === userName);
         user.flashcardsCreated++;
         if (user.flashcardsCreated >= 3) {
-            if (!user.badges.includes["helping hand"]) {
+            if (!user.badges.includes("helping hand")) {
                 user.badges.push("helping hand");
             }
         }
@@ -253,6 +253,18 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
         const user = db.users.find(user => user.name === userName);
         return user.badges;
     }
+
+    function addSkillDiffBadge(leaderboard, userName) {
+        if (leaderboard[0].name === userName && leaderboard.length > 1) {
+            console.log('yes')
+            if (!getBadges(userName).includes("skill diff") &&
+            ((parseInt(leaderboard[0].xp) - parseInt(leaderboard[1].xp)) >= 50)) {
+                const db = getData();
+                const user = db.users.find(user => user.name === userName);
+                user.badges.push("skill diff");
+            }
+        }
+    }
     /**
      *
      */
@@ -269,5 +281,6 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
         getAnswer,
         resetStreak,
         getStreak,
-        getBadges
+        getBadges,
+        addSkillDiffBadge
     }
