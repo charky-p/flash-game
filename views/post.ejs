@@ -386,12 +386,15 @@
 
 				if (!response.ok) throw new Error(response.status === 409 ? 'This flashcard question already exists' : `HTTP error ${response.status}`);
 
-				showStatusMessage('Flashcard saved successfully! Redirecting...', 'success');
-				setTimeout(() => window.location.href = '/group/dashboard', 2000);
+				showStatusMessage('Flashcard saved successfully!', 'success');
+				setTimeout(() => {
+                    clearForm();
+                    setLoading(false);
+                }, 1000);
 			} catch (error) {
 				showStatusMessage('This flashcard question already exists', 'error');
+                setLoading(false);
 			} finally {
-				setLoading(false);
 			}
 		}
 	</script>
