@@ -1,5 +1,8 @@
-    const { json } = require('express');
+const { json } = require('express');
 const { getData } = require('./dataStore');
+
+const DEFAULT_XP = 10;
+const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
 
     /**
      * Login/register user
@@ -127,7 +130,6 @@ const { getData } = require('./dataStore');
             const user = db.users.find(user => user.name === userName);
             console.log('user ', JSON.stringify(user));
             if (user) {
-                const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
                 const now = Date.now()
 
                 user.flashcardAttempts = user.flashcardAttempts.filter(attempt => {
@@ -154,14 +156,15 @@ const { getData } = require('./dataStore');
         const group = db.groups.find(group => group.users.includes(userName));
 
         if (group) {
-            const flashcard = group.flashcards.find(fc => fc.flashcardId === flashcardId);
-            const user = group.users.find(user => user.name === userName);
+            const flashcard = getFlashcard(flashcardId, userName);
+            const user = db.users.find(user => user.name === userName);
             if (flashcard) {
                 if (flashcard.correctAnswer == answer) {
-                    user.push({
+                    user.flashcardAttempts.push({
                         flashcardId: flashcardId,
                         time: Date.now()
                     });
+                    user.xp += DEFAULT_XP;
                     return true;
                 }
                 return false;
@@ -176,6 +179,11 @@ const { getData } = require('./dataStore');
         const group = db.groups.find(group => group.users.includes(userName));
         return group.flashcards.find(f => f.flashcardId = flashcardId);
     }
+
+    function getAnswer(flaschardId, userName) {
+        return getFlashcard(flaschardId, userName).correctAnswer;
+    }
+
     /**
      *
      */
@@ -188,5 +196,6 @@ const { getData } = require('./dataStore');
         reviewFlashcard,
         answerFlashcard,
         createFlashcard,
-        getFlashcard
+        getFlashcard,
+        getAnswer
     }

@@ -133,8 +133,16 @@ app.get('/group/review/:id', (req, res) => {
     if (flashcard) {
         res.render('review', { question: flashcard.question, answers: flashcard.answers});
     } else {
-        res.status(400).send('Uh oh');
+        res.status(400).send('Error');
     }
 });
 
+app.post('/group/review/:id/answer', (req, res) => {
+    const flashcardId = req.params.id;
+    const username = req.session.user;
+    const { answer } = req.body;
+    const correctAnswer = main.getAnswer(flashcardId, username);
 
+    main.answerFlashcard(answer, flashcardId, username);
+    res.json({ correctAnswerIndex: correctAnswer });
+});
