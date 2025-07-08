@@ -14,7 +14,7 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
         // Check if user has not been registered
         const user = data.users.find(user => user.name === name);
         if (!user) {
-            const newUser = { name: name, password: password, group: null, xp: 0, flashcardAttempts: [] };
+            const newUser = { name: name, password: password, group: null, xp: 0, streak: 0, flashcardAttempts: [] };
             data.users.push(newUser);
             return newUser;
         } else if (password === user.password) {
@@ -141,6 +141,11 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
                     return now - attemptTime <= ONE_DAY;
                 });
 
+                // Reset streak if no attempts in last day
+                if (user.flashcardAttempts.length == 0) {
+                    user.streak = 0;
+                }
+
                 attemptsPerFlashCard = {}
                 // Count
                 user.flashcardAttempts.forEach(f => {
@@ -177,15 +182,18 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
             const user = db.users.find(user => user.name === userName);
             if (flashcard) {
                 if (flashcard.correctAnswer == answer) {
+                    user.streak++;
                     let attempts = user.flashcardAttempts.filter(f => f.flashcardId == flashcardId && !f.correct);
-                    user.xp += DEFAULT_XP / Math.pow(2, attempts.length);
+                    user.xp += (DEFAULT_XP / Math.pow(2, attempts.length)) * (1 + 0.25 * (user.streak >= 3));
+                } else {
+                    user.streak = 0;
                 }
                 user.flashcardAttempts.push({
                     flashcardId: flashcardId,
                     time: Date.now(),
                     correct: flashcard.correctAnswer == answer
                 });
-                return flashcard.correctAnswer == answer;
+                return user.streak;
             }
         }
 
@@ -206,6 +214,18 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
         return getFlashcard(flashcardId, userName).correctAnswer;
     }
 
+    function resetStreak(userName) {
+        const db = getData();
+        const user = db.users.find(user => user.name === userName);
+        user.streak = 0;
+    }
+
+    function getStreak(userName) {
+        const db = getData();
+        const user = db.users.find(user => user.name === userName);
+        return user.streak;
+    }
+
     /**
      *
      */
@@ -219,5 +239,7 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
         answerFlashcard,
         createFlashcard,
         getFlashcard,
-        getAnswer
+        getAnswer,
+        resetStreak,
+        getStreak
     }

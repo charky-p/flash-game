@@ -6,6 +6,7 @@
     <title>Orchid - Home</title>
     <link rel="icon" type="image/x-icon" href="/orchid.png">
     <style>
+        /* General styles */
         * {
             margin: 0;
             padding: 0;
@@ -13,7 +14,7 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Inter', sans-serif; /* Changed to Inter as per instructions */
             background: linear-gradient(135deg, #2d1b69 0%, #1a0f3d 50%, #0f0722 100%);
             min-height: 100vh;
             color: #e8e4f0;
@@ -38,6 +39,7 @@
             z-index: -1;
         }
 
+        /* Header styles */
         .header {
             display: flex;
             justify-content: center;
@@ -62,7 +64,7 @@
 
         .app-title::before { 
             content: "";
-            background: url("/orchid.png") no-repeat center;
+            background: url("/orchid.png") no-repeat center; /* Placeholder for orchid.png */
             background-size: contain;
             width: 48px;
             height: 48px;
@@ -72,10 +74,11 @@
                     drop-shadow(0 0 15px rgba(138, 43, 226, 0.3));
         }
 
+        /* Main container grid layout */
         .main-container {
             flex: 1;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
             gap: 30px;
             padding: 40px 30px;
             max-width: 1200px;
@@ -83,6 +86,7 @@
             width: 100%;
         }
 
+        /* Section general styles */
         .section {
             background: rgba(138, 43, 226, 0.1);
             border: 2px solid rgba(138, 43, 226, 0.3);
@@ -92,6 +96,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            animation: fadeInUp 0.6s ease-out; /* Apply animation directly */
         }
 
         .section::before {
@@ -125,6 +130,7 @@
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
+        /* Leaderboard styles */
         .leaderboard-table {
             width: 100%;
             border-collapse: collapse;
@@ -163,17 +169,9 @@
             color: #8a2be2;
         }
 
-        .rank.gold {
+        .rank.gold, .winner-name, .winner-xp {
             color: #ffd700;
             text-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
-            animation: goldPulse 4s ease-in-out infinite;
-        }
-
-        .winner-name {
-            animation: goldPulse 4s ease-in-out infinite;
-        }
-
-        .winner-xp {
             animation: goldPulse 4s ease-in-out infinite;
         }
 
@@ -204,6 +202,7 @@
             color: #666;
         }
 
+        /* Profile section styles */
         .profile-section {
             text-align: center;
         }
@@ -240,6 +239,7 @@
             font-weight: 500;
         }
 
+        /* Action buttons styles */
         .actions-section {
             display: flex;
             flex-direction: column;
@@ -279,14 +279,147 @@
             color: inherit;
         }
 
-        /* Animations */
-        .section {
-            animation: fadeInUp 0.6s ease-out;
+        /* Badges section styles */
+        .badges-section {
+            grid-column: 1 / -1;
+            padding: 20px;
+            background: rgba(138, 43, 226, 0.1);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .section:nth-child(1) { animation-delay: 0.1s; }
-        .section:nth-child(2) { animation-delay: 0.2s; }
+        .badges-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 15px;
+            width: 100%;
+        }
 
+        .badge-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.3;
+            filter: grayscale(100%);
+            transition: all 0.5s ease-out;
+            cursor: default;
+        }
+
+        .badge-item.completed {
+            opacity: 1;
+            filter: grayscale(0%);
+            animation: bounceIn 0.8s ease-out forwards;
+        }
+
+        .badge-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            font-size: 40px;
+        }
+
+        .badge-item.completed .badge-icon {
+            animation: glow 1.5s infinite alternate, emojiPulse 1.5s infinite alternate; /* Combined animations */
+            text-shadow: 0 0 8px #ffd700, 0 0 15px #ffd700; /* Text glow for emoji */
+        }
+
+        /* Removed .badge-icon svg as we are using emojis */
+        /* .badge-icon svg {
+            width: 60%;
+            height: 60%;
+            color: #b19cd9;
+            transition: color 0.3s ease;
+        } */
+
+        /* Removed .badge-item.completed .badge-icon svg as we are using emojis */
+        /* .badge-item.completed .badge-icon svg {
+            color: #ffd700;
+        } */
+
+        .badge-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e8e4f0;
+            text-align: center; /* Centered badge text */
+        }
+
+        /* Quests section styles */
+        .quests-section {
+            /* This section will naturally flow into the grid */
+        }
+
+        .quest-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .quest-item {
+            background: rgba(138, 43, 226, 0.15);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quest-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .quest-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: #8a2be2;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-out;
+        }
+
+        .quest-item:hover::before {
+            transform: translateX(0);
+        }
+
+        .quest-item.completed {
+            background: rgba(50, 205, 50, 0.1); /* Light green for completed */
+            border-color: rgba(50, 205, 50, 0.5);
+        }
+
+        .quest-item.completed::before {
+            background: #32cd32; /* Green bar */
+        }
+
+        .quest-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .quest-description {
+            font-size: 14px;
+            color: #b19cd9;
+        }
+
+        /* Animations */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -307,6 +440,24 @@
             }
         }
 
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
+            50% { box-shadow: 0 0 15px #ffd700, 0 0 25px #ffd700; }
+            100% { box-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
+        }
+
+        @keyframes emojiPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
 
         /* Responsive design */
         @media (max-width: 768px) {
@@ -333,6 +484,29 @@
                 padding: 8px 10px;
                 font-size: 14px;
             }
+
+            .badges-container { /* Adjusted for smaller screens */
+                flex-direction: row; 
+                justify-content: center;
+                gap: 15px;
+                padding: 0; /* Remove padding here, section handles it */
+            }
+
+            .badge-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 30px; /* Smaller font size for emojis on mobile */
+            }
+
+            /* Removed .badge-icon svg as we are using emojis */
+            /* .badge-icon svg {
+                width: 50%;
+                height: 50%;
+            } */
+
+            .badge-name {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -342,7 +516,32 @@
     </div>
 
     <div class="main-container">
-        <div class="section">
+        <!-- Animated Badges Section -->
+        <div class="section badges-section">
+            <h2 class="section-title">Your Badges</h2>
+            <div class="badges-container">
+                <div class="badge-item completed" id="badge-hot-shot" data-quest-id="hot-shot">
+                    <div class="badge-icon">
+                        🔥
+                    </div>
+                    <span class="badge-name">Hot Shot</span>
+                </div>
+                <div class="badge-item" id="badge-helping-hand" data-quest-id="helping-hand">
+                    <div class="badge-icon">
+                        👋
+                    </div>
+                    <span class="badge-name">Helping Hand</span>
+                </div>
+                <div class="badge-item" id="badge-skill-diff" data-quest-id="skill-diff">
+                    <div class="badge-icon">
+                        👑
+                    </div>
+                    <span class="badge-name">Skill Diff</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section leaderboard-section">
             <h2 class="section-title">Leaderboard</h2>
             <table class="leaderboard-table">
                 <thead class="leaderboard-header">
@@ -353,25 +552,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                  <% leaderboard.forEach((player, index) => { %>
-                      <% let rankClass = 'default'; %>
-                      <% if (index === 0) rankClass = 'gold'; %>
-                      <% if (index === 1) rankClass = 'silver'; %>
-                      <% if (index === 2) rankClass = 'bronze'; %>
+                    <% leaderboard.forEach((player, index) => { %>
+                        <% let rankClass = 'default'; %>
+                        <% if (index === 0) rankClass = 'gold'; %>
+                        <% if (index === 1) rankClass = 'silver'; %>
+                        <% if (index === 2) rankClass = 'bronze'; %>
 
-                      <tr class="leaderboard-row">
-                          <td class="rank <%= rankClass %>">#<%= index + 1 %></td>
-                          <td><%= player.name %></td>
-                          <td><%= player.xp.toLocaleString() %></td>
-                      </tr>
-                  <% }); %>
-              </tbody>
+                        <tr class="leaderboard-row">
+                            <td class="rank <%= rankClass %>">#<%= index + 1 %></td>
+                            <td><%= player.name %></td>
+                            <td><%= player.xp.toLocaleString() %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
             </table>
         </div>
 
-        <div class="section">
+        <div class="section profile-section">
             <h2 class="section-title">Profile</h2>
-            <div class="profile-section">
+            <div class="profile-content">
                 <div class="profile-info">
                     <div class="profile-field">
                         <span class="profile-label">Name:</span>
@@ -380,13 +579,13 @@
                     <div class="profile-field">
                         <span class="profile-label">XP:</span>
                         <span class="profile-value">
-                          <%= leaderboard.find(p => p.name === username).xp.toLocaleString() %>
+                            <%= leaderboard.find(p => p.name === username).xp.toLocaleString() %>
                         </span>
                     </div>
                     <div class="profile-field">
                         <span class="profile-label">Rank:</span>
                         <span class="profile-value">
-                          <%= (leaderboard.findIndex(p => p.name === username) + 1).toLocaleString()%>
+                            <%= (leaderboard.findIndex(p => p.name === username) + 1).toLocaleString()%>
                         </span>
                     </div>
                 </div>
@@ -397,6 +596,25 @@
                     <a class="action-button secondary" href="\group\review-flashcards">Review Flashcards</a>
                 </div>
             </div>
+        </div>
+
+        <!-- Quests Section -->
+        <div class="section quests-section">
+            <h2 class="section-title">Your Quests</h2>
+            <ul class="quest-list">
+                <li class="quest-item" data-quest-id="hot-shot">
+                    <h3 class="quest-title">Hot Shot</h3>
+                    <p class="quest-description">Achieve a streak on your first try.</p>
+                </li>
+                <li class="quest-item" data-quest-id="helping-hand">
+                    <h3 class="quest-title">Helping Hand</h3>
+                    <p class="quest-description">Create 3 flashcards.</p>
+                </li>
+                <li class="quest-item" data-quest-id="skill-diff">
+                    <h3 class="quest-title">Skill Diff</h3>
+                    <p class="quest-description">Be first on the leaderboard by at least 30 XP.</p>
+                </li>
+            </ul>
         </div>
     </div>
 </body>

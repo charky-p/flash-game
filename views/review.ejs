@@ -221,7 +221,7 @@
             font-weight: 700;
             color: #ffaa00; /* Warm color for fire */
             text-shadow: 0 0 8px rgba(255, 170, 0, 0.6);
-            opacity: 1; /* Hidden by default */
+            opacity: 0; /* Hidden by default */
             transform: translateY(20px); /* Start below and animate up */
             transition: all 0.5s ease-out;
             z-index: 10;
@@ -315,7 +315,7 @@
     <div class="quiz-container">
         <div class="question-section">
             <div id="streakCounter" class="streak-counter">
-                <span class="streak-fire-icon">🔥<span id="streakText">1 Streak</span></span>
+                <span class="streak-fire-icon">🔥<span id="streakText">n Streak</span></span>
             </div>
           <div class="question-text"><%=question%></div>
         </div>
@@ -339,16 +339,16 @@
     <script>
         let selectedAnswer = null;
         let isAnswerConfirmed = false;
-        let currentStreak = 1;
+        let currentStreak = 0;
 
         // Function to update and display the streak
         function updateStreakDisplay() {
             const streakCounter = document.getElementById('streakCounter');
             const streakText = document.getElementById('streakText');
 
-            if (currentStreak > 0) {
+            if (currentStreak > 2) {
                 streakText.textContent = `${currentStreak} Streak`;
-                streakCounter.style.display = 'flex'; // Show the counter
+                streakCounter.style.opacity = 1; // Show the counter
                 // Trigger animation by adding/removing 'active' class
                 streakCounter.classList.remove('active');
                 void streakCounter.offsetWidth; // Trigger reflow
@@ -396,20 +396,22 @@
               headers: {
                 'Content-Type': 'application/json'
               },
-              body: JSON.stringify({ answer: selectedAnswer })
+              body: JSON.stringify({ answer: selectedAnswer, streak: currentStreak })
             })
             .then(res => res.json())
             .then(data => {
-              let correctAnswerIndex = data.correctAnswerIndex;
-              console.log('Correct index:', correctAnswerIndex);
-               // Show correct/incorrect answers
-            if (selectedAnswer === correctAnswerIndex) {
-                options[selectedAnswer].classList.add('correct');
-                currentStreak++;
-            } else {
-                options[selectedAnswer].classList.add('incorrect');
-                options[correctAnswerIndex].classList.add('correct'); // Highlight the correct one
-            }
+                let correctAnswerIndex = data.correctAnswerIndex;
+                currentStreak = data.streak;
+                console.log('Correct index:', correctAnswerIndex);
+                // Show correct/incorrect answers
+                if (selectedAnswer === correctAnswerIndex) {
+                    options[selectedAnswer].classList.add('correct');
+                } else {
+                    options[selectedAnswer].classList.add('incorrect');
+                    options[correctAnswerIndex].classList.add('correct'); // Highlight the correct one
+                }
+
+                updateStreakDisplay();
             });
 
             // Hide the confirm button

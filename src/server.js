@@ -58,6 +58,7 @@ app.get('/group/dashboard', (req, res) => {
         res.redirect('/group/join');
     } else {
 		console.log(`groupName is ${groupName}`);
+        main.resetStreak(req.session.user);
         res.render('dashboard',
 		{
 			username: req.session.user,
@@ -130,10 +131,11 @@ app.get('/group/review-flashcards/done', (req, res) => {
 app.get('/group/review/:id', (req, res) => {
     const flashcardId = parseInt(req.params.id);
     const flashcard = main.getFlashcard(flashcardId, req.session.user);
+    const streak = main.getStreak(req.session.user);
     if (flashcard) {
-        res.render('review', { question: flashcard.question, answers: flashcard.answers});
+        res.render('review', { question: flashcard.question, answers: flashcard.answers, streak: streak});
     } else {
-        res.status(400).send('Error');
+        res.redirect('/group/dashboard');
     }
 });
 
@@ -143,6 +145,6 @@ app.post('/group/review/:id/answer', (req, res) => {
     const { answer } = req.body;
     const correctAnswer = main.getAnswer(flashcardId, username);
 
-    main.answerFlashcard(answer, flashcardId, username);
-    res.json({ correctAnswerIndex: correctAnswer });
+    const streak = main.answerFlashcard(answer, flashcardId, username);
+    res.json({ correctAnswerIndex: correctAnswer, streak: streak  });
 });
