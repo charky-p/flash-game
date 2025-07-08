@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Complete</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2d1b69 0%, #1a0f3d 50%, #0f0722 100%);
+            min-height: 100vh;
+            color: #e8e4f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle background pattern for focus */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(75, 0, 130, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 70%, rgba(147, 112, 219, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Floating particles for celebration */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(138, 43, 226, 0.6);
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 1s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 2s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 3s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 4s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 5s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 1.5s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 2.5s; }
+        .particle:nth-child(9) { left: 90%; animation-delay: 3.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            50% { transform: translateY(-10vh) rotate(180deg); opacity: 0.8; }
+        }
+
+        .completion-container {
+            text-align: center;
+            max-width: 600px;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .completion-icon {
+            font-size: 80px;
+            color: #8a2be2;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        .completion-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(138, 43, 226, 0.5);
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        .completion-subtitle {
+            font-size: 22px;
+            color: #b19cd9;
+            margin-bottom: 50px;
+            line-height: 1.4;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .home-button {
+            background: linear-gradient(45deg, #8a2be2, #9932cc);
+            border: none;
+            padding: 20px 50px;
+            border-radius: 50px;
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(138, 43, 226, 0.4);
+            border: 2px solid rgba(138, 43, 226, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out 0.9s both;
+        }
+
+        .home-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .home-button:hover::before {
+            left: 100%;
+        }
+
+        .home-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(138, 43, 226, 0.6);
+            background: linear-gradient(45deg, #9932cc, #a642db);
+        }
+
+        .home-button:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .completion-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            .completion-title {
+                font-size: 36px;
+            }
+            
+            .completion-subtitle {
+                font-size: 18px;
+            }
+            
+            .home-button {
+                padding: 16px 40px;
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .completion-title {
+                font-size: 28px;
+            }
+            
+            .completion-subtitle {
+                font-size: 16px;
+            }
+            
+            .completion-icon {
+                font-size: 60px;
+            }
+        }
+
+        /* Animation keyframes */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Glow effect for extra focus ambiance */
+        .completion-container::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #8a2be2, #9932cc, #8a2be2);
+            border-radius: 32px;
+            z-index: -1;
+            opacity: 0.3;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles for celebration -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+
+    <div class="completion-container">
+        <div class="completion-icon">🎉</div>
+        <h1 class="completion-title">You're All Set!</h1>
+        <p class="completion-subtitle">
+            Congratulations! You've completed all your flashcards.<br>
+            Great job on your focused learning session.
+        </p>
+        <button class="home-button" onclick="goHome()">
+            🏠 Back to Home
+        </button>
+    </div>
+
+    <script>
+        function goHome() {
+            // In a real application, this would navigate to the home page
+            // For now, we'll just show an alert
+            window.location.href = '/group/dashboard';
+        }
+
+        // Add some interactive sparkle effect on click
+        document.addEventListener('click', function(e) {
+            createSparkle(e.clientX, e.clientY);
+        });
+
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.style.position = 'fixed';
+            sparkle.style.left = x + 'px';
+            sparkle.style.top = y + 'px';
+            sparkle.style.width = '6px';
+            sparkle.style.height = '6px';
+            sparkle.style.background = '#8a2be2';
+            sparkle.style.borderRadius = '50%';
+            sparkle.style.pointerEvents = 'none';
+            sparkle.style.zIndex = '1000';
+            sparkle.style.animation = 'sparkle 0.6s ease-out forwards';
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                sparkle.remove();
+            }, 600);
+        }
+
+        // Add sparkle animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkle {
+                0% { transform: scale(0) rotate(0deg); opacity: 1; }
+                50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+                100% { transform: scale(0) rotate(360deg); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
