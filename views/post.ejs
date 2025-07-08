@@ -357,7 +357,6 @@
 
     <script>
         let correctAnswerIndex = -1;
-
         function selectCorrect(index) {
             // Remove previous selection
             document.querySelectorAll('.correct-indicator').forEach(indicator => {
@@ -436,10 +435,7 @@
                 answers: answers.map(answer => answer.trim()),
                 correctAnswer: correctAnswerIndex,
             };
-            
-            setLoading(true);
-            hideStatusMessage();
-            
+
             try {
                 const response = await fetch('/group/create-flashcard', {
                     method: 'POST',
@@ -452,22 +448,23 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-
+                
+                setLoading(true);
+                hideStatusMessage();
                 const result = await response.json();
                 
-                showStatusMessage('Quiz saved successfully! Redirecting...', 'success');
+                showStatusMessage('Flashcard saved successfully! Redirecting...', 'success');
                 console.log('Quiz saved:', result);
-                
                 // Redirect after successful save
                 setTimeout(() => {
                     window.location.href = '/group/dashboard';
+                    setLoading(false);
                 }, 2000);
                 
             } catch (error) {
                 console.error('Error saving quiz:', error);
-                showStatusMessage('Failed to save quiz. Please try again.', 'error');
+                showStatusMessage('This flashcard question already exists', 'error');
             } finally {
-                setLoading(false);
             }
         }
     </script>

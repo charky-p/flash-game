@@ -108,6 +108,9 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
         const group = db.groups.find(group => group.users.includes(userName));
 
         if (group) {
+            if (group.flashcards.find(f => f.question === question)) {
+                return false;
+            }
             const flashcard = {
                 flashcardId: db.flashcardAmt,
                 question: question,
@@ -132,18 +135,32 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
             if (user) {
                 const now = Date.now()
 
+                // Remove day old attempts
                 user.flashcardAttempts = user.flashcardAttempts.filter(attempt => {
                     const attemptTime = new Date(attempt.time).getTime();
                     return now - attemptTime <= ONE_DAY;
                 });
 
-                const flashcardIds = user.flashcardAttempts.map(fc => parseInt(fc.flashcardId));
-                console.log(`flashcardIds`, JSON.stringify(flashcardIds));
-                console.log(`group.flashcards`, JSON.stringify(group.flashcards));
-                const filteredFlashcards = group.flashcards.filter(flashcard => !flashcardIds.includes(flashcard.flashcardId));
-                console.log(`group.flashcards`, JSON.stringify(filteredFlashcards));
+                attemptsPerFlashCard = {}
+                // Count
+                user.flashcardAttempts.forEach(f => {
+                    const id = f.flashcardId;
+                    if (!attemptsPerFlashCard[id]) {
+                        attemptsPerFlashCard[id] = 1;
+                    } else {
+                        attemptsPerFlashCard[id]++;
+                    }
+                });
 
-                return filteredFlashcards.map(f => f.flashcardId);
+                let flashcardIds = group.flashcards.map(f => f.flashcardId);
+                // Find flashcards that have been attempted 3 or more times or correctly answered
+                let disallowedIds = user.flashcardAttempts.filter(
+                    f => f.correct || (attemptsPerFlashCard[f.flashcardId] >= 3
+                    )).map(f => f.flashcardId);
+                console.log(`disallowed ids `, JSON.stringify(disallowedIds));
+                let allowed_ids = flashcardIds.filter(f => !disallowedIds.includes(f));
+                console.log(`allowed ids `, JSON.stringify(allowed_ids));
+                return allowed_ids;
             }
         }
 
@@ -160,14 +177,15 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
             const user = db.users.find(user => user.name === userName);
             if (flashcard) {
                 if (flashcard.correctAnswer == answer) {
-                    user.flashcardAttempts.push({
-                        flashcardId: flashcardId,
-                        time: Date.now()
-                    });
-                    user.xp += DEFAULT_XP;
-                    return true;
+                    let attempts = user.flashcardAttempts.filter(f => f.flashcardId == flashcardId && !f.correct);
+                    user.xp += DEFAULT_XP / Math.pow(2, attempts.length);
                 }
-                return false;
+                user.flashcardAttempts.push({
+                    flashcardId: flashcardId,
+                    time: Date.now(),
+                    correct: flashcard.correctAnswer == answer
+                });
+                return flashcard.correctAnswer == answer;
             }
         }
 
@@ -184,8 +202,8 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
         return val;
     }
 
-    function getAnswer(flaschardId, userName) {
-        return getFlashcard(flaschardId, userName).correctAnswer;
+    function getAnswer(flashcardId, userName) {
+        return getFlashcard(flashcardId, userName).correctAnswer;
     }
 
     /**
