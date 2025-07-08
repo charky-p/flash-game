@@ -67,6 +67,9 @@ app.get('/group/dashboard', (req, res) => {
 });
 
 app.get('/group/join', (req, res) => {
+    if (main.getPlayerGroupName(req.session.userId)) {
+        res.redirect('group/dashboard');
+    }
     res.render('nogroup');
 });
 
