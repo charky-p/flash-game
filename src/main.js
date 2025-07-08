@@ -14,7 +14,8 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
         // Check if user has not been registered
         const user = data.users.find(user => user.name === name);
         if (!user) {
-            const newUser = { name: name, password: password, group: null, xp: 0, streak: 0, flashcardAttempts: [] };
+            const newUser = { name: name, password: password, group: null, xp: 0, streak: 0, flashcardAttempts: [], 
+                flashcardsCreated: 0, badges: [] };
             data.users.push(newUser);
             return newUser;
         } else if (password === user.password) {
@@ -119,11 +120,22 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
             };
             db.flashcardAmt++;
             group.flashcards.push(flashcard);
+            addHelpingHandBadge(userName);
             return flashcard;
         }
         return null;
     }
 
+    function addHelpingHandBadge(userName) {
+        const db = getData();
+        const user = db.users.find(user => user.name === userName);
+        user.flashcardsCreated++;
+        if (user.flashcardsCreated >= 3) {
+            if (!user.badges.includes["helping hand"]) {
+                user.badges.push("helping hand");
+            }
+        }
+    }
     function reviewFlashcard(userName) {
         const db = getData();
         const group = db.groups.find(group => group.users.includes(userName));
@@ -183,6 +195,7 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
             if (flashcard) {
                 if (flashcard.correctAnswer == answer) {
                     user.streak++;
+                    addHotShotBadge(user);
                     let attempts = user.flashcardAttempts.filter(f => f.flashcardId == flashcardId && !f.correct);
                     user.xp += (DEFAULT_XP / Math.pow(2, attempts.length)) * (1 + 0.25 * (user.streak >= 3));
                 } else {
@@ -198,6 +211,10 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
         }
 
         return null;
+    }
+
+    function addHotShotBadge(user) {
+        return;
     }
 
     function getFlashcard(flashcardId, userName) {
@@ -226,6 +243,11 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
         return user.streak;
     }
 
+    function getBadges(userName) {
+        const db = getData();
+        const user = db.users.find(user => user.name === userName);
+        return user.badges;
+    }
     /**
      *
      */
@@ -241,5 +263,6 @@ const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
         getFlashcard,
         getAnswer,
         resetStreak,
-        getStreak
+        getStreak,
+        getBadges
     }

@@ -59,10 +59,12 @@ app.get('/group/dashboard', (req, res) => {
     } else {
 		console.log(`groupName is ${groupName}`);
         main.resetStreak(req.session.user);
+        const badges = main.getBadges(req.session.user);
         res.render('dashboard',
 		{
 			username: req.session.user,
-			leaderboard: main.getLeaderboard(groupName)
+			leaderboard: main.getLeaderboard(groupName),
+            badges: badges
 		});
     }
 });

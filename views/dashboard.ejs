@@ -520,13 +520,19 @@
         <div class="section badges-section">
             <h2 class="section-title">Your Badges</h2>
             <div class="badges-container">
-                <div class="badge-item completed" id="badge-hot-shot" data-quest-id="hot-shot">
+                <div class="badge-item" id="badge-hot-shot" data-quest-id="hot-shot">
                     <div class="badge-icon">
                         🔥
                     </div>
                     <span class="badge-name">Hot Shot</span>
                 </div>
-                <div class="badge-item" id="badge-helping-hand" data-quest-id="helping-hand">
+                <div
+                    <% if (badges && badges.includes("helping hand")) { %>
+                        class="badge-item completed"
+                    <% } else { %>
+                        class="badge-item"
+                    <% } %>
+                 id="badge-helping-hand" data-quest-id="helping-hand">
                     <div class="badge-icon">
                         👋
                     </div>
@@ -604,7 +610,7 @@
             <ul class="quest-list">
                 <li class="quest-item" data-quest-id="hot-shot">
                     <h3 class="quest-title">Hot Shot</h3>
-                    <p class="quest-description">Achieve a streak on your first try.</p>
+                    <p class="quest-description">Achieve a 4 streak on your first try.</p>
                 </li>
                 <li class="quest-item" data-quest-id="helping-hand">
                     <h3 class="quest-title">Helping Hand</h3>
@@ -612,7 +618,7 @@
                 </li>
                 <li class="quest-item" data-quest-id="skill-diff">
                     <h3 class="quest-title">Skill Diff</h3>
-                    <p class="quest-description">Be first on the leaderboard by at least 30 XP.</p>
+                    <p class="quest-description">Be first on the leaderboard by 50 XP.</p>
                 </li>
             </ul>
         </div>
