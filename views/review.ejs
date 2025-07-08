@@ -212,6 +212,43 @@
             background: linear-gradient(45deg, #27ae60, #229954);
         }
 
+        .streak-counter {
+            display: flex;
+            align-items: center;
+            justify-content: right;
+            gap: 10px; /* Space between icon and text */
+            font-size: 24px; /* Larger font for visibility */
+            font-weight: 700;
+            color: #ffaa00; /* Warm color for fire */
+            text-shadow: 0 0 8px rgba(255, 170, 0, 0.6);
+            opacity: 1; /* Hidden by default */
+            transform: translateY(20px); /* Start below and animate up */
+            transition: all 0.5s ease-out;
+            z-index: 10;
+        }
+
+        .streak-counter.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .streak-fire-icon {
+            font-size: 28px; /* Slightly larger icon */
+            animation: pulseFire 1.5s infinite ease-in-out; /* Pulsing animation */
+        }
+
+        @keyframes pulseFire {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Adjust header to accommodate the streak counter */
+        .header {
+            position: relative; /* Make header a positioning context for the streak */
+            /* ... existing header styles ... */
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             .quiz-container {
@@ -277,6 +314,9 @@
 
     <div class="quiz-container">
         <div class="question-section">
+            <div id="streakCounter" class="streak-counter">
+                <span class="streak-fire-icon">🔥<span id="streakText">1 Streak</span></span>
+            </div>
           <div class="question-text"><%=question%></div>
         </div>
 
@@ -299,6 +339,26 @@
     <script>
         let selectedAnswer = null;
         let isAnswerConfirmed = false;
+        let currentStreak = 1;
+
+        // Function to update and display the streak
+        function updateStreakDisplay() {
+            const streakCounter = document.getElementById('streakCounter');
+            const streakText = document.getElementById('streakText');
+
+            if (currentStreak > 0) {
+                streakText.textContent = `${currentStreak} Streak`;
+                streakCounter.style.display = 'flex'; // Show the counter
+                // Trigger animation by adding/removing 'active' class
+                streakCounter.classList.remove('active');
+                void streakCounter.offsetWidth; // Trigger reflow
+                streakCounter.classList.add('active');
+            } else {
+                streakCounter.classList.remove('active');
+                // You might want to hide it completely if streak is 0
+                // setTimeout(() => { streakCounter.style.display = 'none'; }, 500); // Hide after animation
+            }
+        }
 
         function selectAnswer(index) {
             if (isAnswerConfirmed) return;
@@ -345,6 +405,7 @@
                // Show correct/incorrect answers
             if (selectedAnswer === correctAnswerIndex) {
                 options[selectedAnswer].classList.add('correct');
+                currentStreak++;
             } else {
                 options[selectedAnswer].classList.add('incorrect');
                 options[correctAnswerIndex].classList.add('correct'); // Highlight the correct one
