@@ -67,10 +67,12 @@ app.get('/group/dashboard', (req, res) => {
 });
 
 app.get('/group/join', (req, res) => {
-    if (main.getPlayerGroupName(req.session.userId)) {
-        res.redirect('group/dashboard');
+    res.set('Cache-Control', 'no-store');
+    if (main.getPlayerGroupName(req.session.user)) {
+        res.redirect('/group/dashboard');
+    } else {
+        res.render('nogroup');
     }
-    res.render('nogroup');
 });
 
 app.post('/group/join', (req, res) => {

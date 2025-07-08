@@ -180,7 +180,7 @@ const { getData } = require('./dataStore');
         loginUser,
         createGroup,
         joinGroup,
-        getPlayerGroupName,``
+        getPlayerGroupName,
         getLeaderboard,
         reviewFlashcard,
         answerFlashcard,

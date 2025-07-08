@@ -270,6 +270,12 @@
     </div>
 
     <script>
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                // Page was loaded from cache, force reload
+                window.location.reload();
+            }
+        });
         let currentAction = null; // 'join' or 'create'
         const feedbackMessage = document.getElementById('feedbackMessage'); // Get the message element
 
