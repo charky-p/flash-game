@@ -166,11 +166,13 @@ function answerFlashcard(answer, flashcardId, userName) {
         const flashcard = getFlashcard(flashcardId, userName);
         const user = getUser(userName);
         if (flashcard) {
+            let xpGained = 0;
             if (flashcard.correctAnswer === answer) {
                 user.streak++;
                 addHotShotBadge(user);
                 let attempts = user.flashcardAttempts.filter(f => f.flashcardId == flashcardId && !f.correct);
-                user.xp += (DEFAULT_XP / Math.pow(2, attempts.length)) * (1 + 0.25 * (user.streak >= 3));
+                xpGained = (DEFAULT_XP / Math.pow(2, attempts.length)) * (1 + 0.25 * (user.streak >= 3));
+                user.xp += xpGained;
             } else {
                 user.streak = 0;
             }
@@ -179,14 +181,14 @@ function answerFlashcard(answer, flashcardId, userName) {
                 time: Date.now(),
                 correct: flashcard.correctAnswer == answer
             });
-            return user.streak;
+            return xpGained;
         }
     }
     return null;
 }
 
 function addHotShotBadge(user) {
-    if (user.streak > 3 && !user.badges.includes("hot shot")) {
+    if (user.streak > 4 && !user.badges.includes("hot shot")) {
         if (!user.flashcardAttempts.find(f => f.correct === false)) {
             user.badges.push("hot shot");
         }
@@ -231,6 +233,12 @@ function addSkillDiffBadge(leaderboard, userName) {
     }
 }
 
+function flashcardAllowed(flashcardId, userName) {
+    const user = getUser(userName);
+    const attempts = user.flashcardAttempts.filter(f => f.flashcardId === flashcardId);
+    return (attempts.length < 3 && !attempts.find(f => f.correct));
+}
+
 module.exports = {
     loginUser,
     createGroup,
@@ -245,5 +253,6 @@ module.exports = {
     resetStreak,
     getStreak,
     getBadges,
-    addSkillDiffBadge
+    addSkillDiffBadge,
+    flashcardAllowed
 };

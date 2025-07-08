@@ -136,10 +136,10 @@ app.get('/group/review/:id', (req, res) => {
     const flashcardId = parseInt(req.params.id);
     const flashcard = main.getFlashcard(flashcardId, req.session.user);
     const streak = main.getStreak(req.session.user);
-    if (flashcard) {
+    if (flashcard && main.flashcardAllowed(flashcardId, req.session.user)) {
         res.render('review', { question: flashcard.question, answers: flashcard.answers, streak: streak});
     } else {
-        res.redirect('/group/dashboard');
+        res.redirect('/group/review-flashcards/done');
     }
 });
 
@@ -149,6 +149,7 @@ app.post('/group/review/:id/answer', (req, res) => {
     const { answer } = req.body;
     const correctAnswer = main.getAnswer(flashcardId, username);
 
-    const streak = main.answerFlashcard(answer, flashcardId, username);
-    res.json({ correctAnswerIndex: correctAnswer, streak: streak  });
+    const xpGained = main.answerFlashcard(answer, flashcardId, username);
+    const streak = main.getStreak(username);
+    res.json({ correctAnswerIndex: correctAnswer, streak: streak, xpAwarded: xpGained });
 });

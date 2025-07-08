@@ -389,7 +389,7 @@
 				showStatusMessage('Flashcard saved successfully! Redirecting...', 'success');
 				setTimeout(() => window.location.href = '/group/dashboard', 2000);
 			} catch (error) {
-				showStatusMessage(error.message, 'error');
+				showStatusMessage('This flashcard question already exists', 'error');
 			} finally {
 				setLoading(false);
 			}

@@ -249,6 +249,65 @@
             /* ... existing header styles ... */
         }
 
+        /* New styles for XP gained text */
+        .xp-gained {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff7b00; /* Bright green for XP */
+            opacity: 0; /* Starts hidden */
+            transform: translateY(20px); /* Starts slightly below */
+            position: absolute;
+            transition: all 0.5s ease-out; /* Smooth transition for initial appearance */
+            right: 200px; /* Adjust as needed to position it beside the buttons */
+            bottom: 100px; /* Adjust as needed */
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            z-index: 5;
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+
+        .xp-gained.show {
+            opacity: 1; /* Fully visible */
+            transform: translateY(0); /* Moves to its natural position */
+            animation: fadeInOutUp 1.5s forwards; /* Animation for showing and fading out */
+        }
+
+        @keyframes fadeInOutUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            20% { /* Quickly appear */
+                opacity: 1;
+                transform: translateY(0);
+            }
+            80% { /* Start fading out while moving up */
+                opacity: 1;
+                transform: translateY(-20px);
+            }
+            100% { /* Fully faded and moved further up */
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+        }
+
+        /* IMPORTANT: Make the .controls container a positioning context */
+        .controls {
+            position: relative; /* Crucial for absolute positioning of .xp-gained */
+            display: flex; /* Keep your existing flexbox properties */
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 30px 30px;
+            gap: 20px;
+        }
+
+        /* Responsive adjustment for XP text */
+        @media (max-width: 768px) {
+            .xp-gained {
+                right: 120px; /* Adjust for smaller screens */
+                bottom: 20px;
+            }
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             .quiz-container {
@@ -314,6 +373,7 @@
 
     <div class="quiz-container">
         <div class="question-section">
+            <div id="xpGained" class="xp-gained"></div>
             <div id="streakCounter" class="streak-counter">
                 <span class="streak-fire-icon">🔥<span id="streakText">n Streak</span></span>
             </div>
@@ -406,6 +466,8 @@
                 // Show correct/incorrect answers
                 if (selectedAnswer === correctAnswerIndex) {
                     options[selectedAnswer].classList.add('correct');
+                    const xpAwarded = data.xpAwarded;
+                    showXpGained(xpAwarded);
                 } else {
                     options[selectedAnswer].classList.add('incorrect');
                     options[correctAnswerIndex].classList.add('correct'); // Highlight the correct one
@@ -426,6 +488,23 @@
             if (confirm('Are you sure you want to go back?')) {
               window.location.href = '/group/dashboard';
             }
+        }
+
+        function showXpGained(xp) {
+            const xpGainedElement = document.getElementById('xpGained');
+            xpGainedElement.textContent = `+${xp} XP`;
+            xpGainedElement.classList.add('show'); // Add the 'show' class to trigger CSS animation
+            if (currentStreak >= 3) {
+                xpGainedElement.style.color = 'rgba(255, 165, 0, 0.8)';
+            } else {
+                xpGainedElement.style.color = '#00ff00';
+            }
+            // Remove the 'show' class after the animation is complete
+            // The duration (1500ms) should match the total time of `fadeInOutUp` animation
+            setTimeout(() => {
+                xpGainedElement.classList.remove('show');
+                xpGainedElement.textContent = ''; // Clear text content for the next display
+            }, 1500);
         }
     </script>
 </body>
