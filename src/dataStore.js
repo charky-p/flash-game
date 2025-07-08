@@ -1,6 +1,7 @@
 const data = {
     users: [],
     groups: [],
+    flashcardAmt: 0
 }
 
 // User
@@ -8,6 +9,7 @@ const data = {
 // password: String
 // groupId: String / null
 // points: int
+// flashcardAttempts: [{flashcardId, time}]
 
 // Group
 // name: String
@@ -20,6 +22,7 @@ const data = {
 // question: String
 // answers: [String][4]
 // correctAnswer: String
+// TODO: attempted date
 
 function getData() {
     return data;

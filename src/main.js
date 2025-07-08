@@ -10,7 +10,7 @@ function loginUser(name, password) {
     // Check if user has not been registered
     const user = data.users.find(user => user.name === name);
     if (!user) {
-        const newUser = { name: name, password: password, group: null, xp: 0 };
+        const newUser = { name: name, password: password, group: null, points: 0, flashcardAttempts: [] };
         data.users.push(newUser);
         return newUser;
     } else if (password === user.password) {
@@ -98,6 +98,71 @@ function getLeaderboard(groupName) {
     }
     return null;
 }
+
+function createFlashcard(question, answers, correctAnswer, userName) {
+    const db = getData();
+    const group = db.groups.find(group => group.users.includes(userName));
+
+    if (group) {
+        const flashcard = { 
+            flashcardId: db.flashcardAmt,
+            question: question,
+            answers: answers,
+            correctAnswer: correctAnswer
+        };
+        db.flashcardAmt++;
+        group.flashcards.push(flashcard);
+        return flashcard;
+    }
+    return null;
+}
+
+function reviewFlashcard(userName, groupId) {
+    const db = getData();
+    const group = db.groups.find(group => group.users.includes(userName));
+    
+    if (group) {
+        // Go through attempted flashcards, filter them out
+        const user = group.users.find(user => user.userName === userName);
+        if (user) {
+            const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
+            const now = Date.now();
+
+            user.flashcardAttempts = user.flashcardAttempts.filter(attempt => {
+                const attemptTime = new Date(attempt.time).getTime();
+                return now - attemptTime <= ONE_DAY;
+            });
+
+            const flashcardIds = user.flashcardAttempts(fc => fc.flashcardId);
+            return group.flashcards.filter(flashcard => !flashcardIds.includes(flashcard.flashcardId));
+        }
+    }
+
+    return null;
+
+}
+
+function answerFlashcard(answer, flashcardId, userName) {
+    const db = getData();
+    const group = db.groups.find(group => group.users.includes(userName));
+
+    if (group) {
+        const flashcard = group.flashcards.find(fc => fc.flaschardId === flashcardId);
+        const user = group.users.find(user => user.userName === userName);
+        if (flashcard) {
+            if (flashcard.correctAnswer == answer) {
+                user.push({
+                    flashcardId: flashcardId,
+                    time: Date.now()
+                });
+                return true;
+            }
+            return false;
+        }
+    }
+
+    return null;
+}
 /**
  *
  */
@@ -106,5 +171,7 @@ module.exports = {
     createGroup,
     joinGroup,
     getPlayerGroupName,
-    getLeaderboard
+    getLeaderboard,
+    reviewFlashcard,
+    answerFlashcard
 }
