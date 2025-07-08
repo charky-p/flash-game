@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlashMob - Login/Register</title>
+    <title> Orchid - Login/Register</title>
+    <link rel="icon" type="image/x-icon" href="/orchid.png">
     <style>
         * {
             margin: 0;
@@ -57,8 +58,24 @@
             margin-bottom: 20px;
             text-align: center;
             animation: fadeInUp 0.8s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            
         }
 
+        .app-title::before { 
+            content: "";
+            background: url("/orchid.png") no-repeat center;
+            background-size: contain;
+            width: 56px;
+            height: 56px;
+            display: inline-block;
+            animation: rotateClockwise 10s linear infinite;
+            filter: drop-shadow(0 4px 8px rgba(138, 43, 226, 0.4)) 
+                    drop-shadow(0 0 15px rgba(138, 43, 226, 0.3));
+        }
         .app-subtitle {
             font-size: 18px;
             color: #b19cd9;
@@ -194,6 +211,15 @@
             }
         }
 
+        @keyframes rotateClockwise {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
 
     </style>
 </head>
@@ -201,7 +227,7 @@
 
 
     <div class="login-container">
-        <h1 class="app-title">FlashMob</h1>
+        <h1 class="app-title">Orchid</h1>
         <p class="app-subtitle">Learn smarter, not harder</p>
 
         <form class="login-form" id="loginForm" action="/login" method="POST">
