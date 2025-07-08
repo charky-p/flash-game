@@ -1,33 +1,299 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
-  <link rel="stylesheet" href="/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlashMob - Login/Register</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2d1b69 0%, #1a0f3d 50%, #0f0722 100%);
+            min-height: 100vh;
+            color: #e8e4f0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Subtle background pattern for focus */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(75, 0, 130, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .login-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            width: 100%;
+        }
+
+        .app-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 4px 20px rgba(138, 43, 226, 0.5);
+            margin-bottom: 20px;
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .app-subtitle {
+            font-size: 18px;
+            color: #b19cd9;
+            margin-bottom: 50px;
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .login-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e8e4f0;
+            margin-left: 5px;
+        }
+
+        .form-input {
+            background: rgba(138, 43, 226, 0.1);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 15px;
+            padding: 18px 20px;
+            font-size: 16px;
+            color: #e8e4f0;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            outline: none;
+        }
+
+        .form-input::placeholder {
+            color: #b19cd9;
+        }
+
+        .form-input:focus {
+            border-color: #8a2be2;
+            background: rgba(138, 43, 226, 0.2);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .login-button {
+            background: linear-gradient(45deg, #8a2be2, #9932cc);
+            border: none;
+            padding: 18px 35px;
+            border-radius: 30px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            margin-top: 20px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(138, 43, 226, 0.5);
+            background: linear-gradient(45deg, #9932cc, #a642db);
+        }
+
+        .login-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* ERROR MESSAGE STYLING - CONNECT TO YOUR BACKEND LOGIC HERE */
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.5);
+            border-radius: 10px;
+            padding: 15px 20px;
+            color: #ff6b6b;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: shake 0.5s ease-in-out;
+            display: none; /* Show this when backend returns error */
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 20px 20px;
+            }
+            
+            .app-title {
+                font-size: 36px;
+            }
+            
+            .form-input {
+                padding: 15px 18px;
+                font-size: 15px;
+            }
+            
+            .login-button {
+                padding: 15px 30px;
+                font-size: 16px;
+            }
+        }
+
+        /* Focus animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+    </style>
 </head>
 <body>
-  <div class="header">
-    <div class="header-logo">Flash Mob</a>
-  </div>
-  <div class="login">
-    <h1>Log in!</h1>
-    <form action="/login" method="POST">
-      <div>
-        <label for="username">Email</label>
-        <input type="email" name="username" required>
-      </div>
-      <div>
-        <label for="password">Password</label>
-        <input type="password" name="password" required>
-      </div>
-      <input type="submit" id="submit">
-    </form>
-    <% if (locals.error == true) { %>
-      <ul>
-        <li>Invalid email or password!</li>
-      </ul>
-    <% } %>
-  </div>
+
+
+    <div class="login-container">
+        <h1 class="app-title">FlashMob</h1>
+        <p class="app-subtitle">Learn smarter, not harder</p>
+
+        <form class="login-form" id="loginForm" action="/login" method="POST">
+            <!-- 
+            ERROR MESSAGE SECTION - BACKEND INTEGRATION NEEDED
+            Connect this to your backend validation logic:
+            - Show error-message div when username already exists
+            - Add class "show" to make it visible
+            - Update error text content with specific message
+            -->
+            <div class="error-message" id="errorMessage">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="username">Name</label>
+                <input 
+                    type="text" 
+                    class="form-input" 
+                    id="username" 
+                    name="username" 
+                    placeholder="Enter your name"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input 
+                    type="password" 
+                    class="form-input" 
+                    id="password" 
+                    name="password" 
+                    placeholder="Enter your password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="login-button">Login/Register</button>
+        </form>
+    </div>
+
+    <script>
+        // Form submission handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Basic validation
+            if (!username || !password) {
+                showError('Please fill in both name and password fields.');
+                return;
+            }
+
+            // Clear any existing errors
+            hideError();
+            fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Redirect to main app
+                    window.location.href = '/group/dashboard';
+                } else {
+                    showError('Username or password invalid.');
+                }
+            });
+            // .catch(error => {
+            //     showError('Connection error. Please try again.');
+            // });
+
+            // Temporary demo - remove this when implementing backend
+        });
+
+        // Error message functions
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+
+        function hideError() {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.classList.remove('show');
+        }
+
+        // Hide error when user starts typing
+        document.getElementById('username').addEventListener('input', hideError);
+        document.getElementById('password').addEventListener('input', hideError);
+    </script>
 </body>
 </html>
