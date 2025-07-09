@@ -61,7 +61,8 @@ app.get('/group/dashboard', (req, res) => {
         res.render('dashboard',
 		{
 			username: req.session.user,
-			leaderboard: main.getLeaderboard(groupName)
+			leaderboard: main.getLeaderboard(groupName),
+            groupName: groupName
 		});
     }
 });
