@@ -58,10 +58,14 @@ app.get('/group/dashboard', (req, res) => {
         res.redirect('/group/join');
     } else {
 		console.log(`groupName is ${groupName}`);
+        const badges = main.getBadges(req.session.user);
+        const leaderboard = main.getLeaderboard(groupName);
+        main.addSkillDiffBadge(leaderboard, req.session.user);
         res.render('dashboard',
 		{
 			username: req.session.user,
-			leaderboard: main.getLeaderboard(groupName),
+			leaderboard: leaderboard,
+            badges: badges,
             groupName: groupName
 		});
     }
@@ -131,10 +135,11 @@ app.get('/group/review-flashcards/done', (req, res) => {
 app.get('/group/review/:id', (req, res) => {
     const flashcardId = parseInt(req.params.id);
     const flashcard = main.getFlashcard(flashcardId, req.session.user);
-    if (flashcard) {
-        res.render('review', { question: flashcard.question, answers: flashcard.answers});
+    const streak = main.getStreak(req.session.user);
+    if (flashcard && main.flashcardAllowed(flashcardId, req.session.user)) {
+        res.render('review', { question: flashcard.question, answers: flashcard.answers, streak: streak});
     } else {
-        res.status(400).send('Error');
+        res.redirect('/group/review-flashcards/done');
     }
 });
 
@@ -144,6 +149,7 @@ app.post('/group/review/:id/answer', (req, res) => {
     const { answer } = req.body;
     const correctAnswer = main.getAnswer(flashcardId, username);
 
-    main.answerFlashcard(answer, flashcardId, username);
-    res.json({ correctAnswerIndex: correctAnswer });
+    const xpGained = main.answerFlashcard(answer, flashcardId, username);
+    const streak = main.getStreak(username);
+    res.json({ correctAnswerIndex: correctAnswer, streak: streak, xpAwarded: xpGained });
 });
