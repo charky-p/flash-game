@@ -4,3 +4,5 @@ A web game where you can create flashcards and compete against your friends for 
 [Devpost project](https://devpost.com/software/1006139/joins/--gL227ic9ykiBQ7idhjdg)
 
 Deployed with render [here](https://orchid-yj8f.onrender.com/)
+
+Developed for the UNSW DevSoc GamJam Hackathon event in T2 2025. Won 2nd place overall. 
