@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Orchid - Login/Register</title>
+    <title>Orchid - Login/Register</title>
     <link rel="icon" type="image/x-icon" href="/orchid.png">
     <style>
         * {
@@ -13,14 +13,22 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #2d1b69 0%, #1a0f3d 50%, #0f0722 100%);
             min-height: 100vh;
+            min-height: -webkit-fill-available; /* iOS Safari fix */
             color: #e8e4f0;
             display: flex;
             flex-direction: column;
             position: relative;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* iOS Safari viewport fix */
+        html {
+            height: -webkit-fill-available;
         }
 
         /* Subtle background pattern for focus */
@@ -35,6 +43,7 @@
                 radial-gradient(circle at 20% 20%, rgba(138, 43, 226, 0.1) 0%, rgba(138, 43, 226, 0) 50%),
                 radial-gradient(circle at 80% 80%, rgba(75, 0, 130, 0.1) 0%, rgba(75, 0, 130, 0) 50%);
             z-index: -1;
+            pointer-events: none;
         }
 
         .login-container {
@@ -61,7 +70,6 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            
         }
 
         .app-title::before { 
@@ -75,6 +83,7 @@
             filter: drop-shadow(0 4px 8px rgba(138, 43, 226, 0.4)) 
                     drop-shadow(0 0 15px rgba(138, 43, 226, 0.3));
         }
+
         .app-subtitle {
             font-size: 18px;
             color: #b19cd9;
@@ -113,11 +122,16 @@
             color: #e8e4f0;
             transition: all 0.3s ease;
             backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px); /* iOS Safari fix */
             outline: none;
+            -webkit-appearance: none; /* Remove iOS default styling */
+            -moz-appearance: none;
+            appearance: none;
         }
 
         .form-input::placeholder {
             color: #b19cd9;
+            opacity: 1; /* Firefox fix */
         }
 
         .form-input:focus {
@@ -125,6 +139,13 @@
             background: rgba(138, 43, 226, 0.2);
             box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
             transform: translateY(-2px);
+        }
+
+        /* iOS Safari input zoom prevention */
+        @media screen and (-webkit-min-device-pixel-ratio: 0) {
+            .form-input {
+                font-size: 16px;
+            }
         }
 
         .login-button {
@@ -140,6 +161,10 @@
             box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
             border: 1px solid rgba(138, 43, 226, 0.5);
             margin-top: 20px;
+            -webkit-appearance: none; /* Remove iOS default styling */
+            -moz-appearance: none;
+            appearance: none;
+            -webkit-tap-highlight-color: transparent; /* Remove iOS tap highlight */
         }
 
         .login-button:hover {
@@ -152,7 +177,16 @@
             transform: translateY(-1px);
         }
 
-        /* ERROR MESSAGE STYLING - CONNECT TO YOUR BACKEND LOGIC HERE */
+        /* iOS Safari active state fix */
+        @media (hover: none) and (pointer: coarse) {
+            .login-button:hover {
+                transform: none;
+                box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+                background: linear-gradient(45deg, #8a2be2, #9932cc);
+            }
+        }
+
+        /* ERROR MESSAGE STYLING */
         .error-message {
             background: rgba(231, 76, 60, 0.2);
             border: 1px solid rgba(231, 76, 60, 0.5);
@@ -164,7 +198,7 @@
             text-align: center;
             margin-bottom: 20px;
             animation: shake 0.5s ease-in-out;
-            display: none; /* Show this when backend returns error */
+            display: none;
         }
 
         @keyframes shake {
@@ -189,7 +223,7 @@
             
             .form-input {
                 padding: 15px 18px;
-                font-size: 15px;
+                font-size: 16px; /* Keep 16px to prevent zoom on iOS */
             }
             
             .login-button {
@@ -219,24 +253,26 @@
             }
         }
 
-
+        /* iOS Safari specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            .form-input {
+                background: rgba(138, 43, 226, 0.15); /* Slightly more opaque for iOS */
+            }
+            
+            .login-button {
+                background: linear-gradient(45deg, #8a2be2, #9932cc);
+                /* Fallback for older iOS versions */
+                background: -webkit-linear-gradient(45deg, #8a2be2, #9932cc);
+            }
+        }
     </style>
 </head>
 <body>
-
-
     <div class="login-container">
         <h1 class="app-title">Orchid</h1>
         <p class="app-subtitle">Learn smarter, not harder</p>
 
         <form class="login-form" id="loginForm" action="/login" method="POST">
-            <!-- 
-            ERROR MESSAGE SECTION - BACKEND INTEGRATION NEEDED
-            Connect this to your backend validation logic:
-            - Show error-message div when username already exists
-            - Add class "show" to make it visible
-            - Update error text content with specific message
-            -->
             <div class="error-message" id="errorMessage">
             </div>
             <div class="form-group">
@@ -297,11 +333,6 @@
                     showError('Username or password invalid.');
                 }
             });
-            // .catch(error => {
-            //     showError('Connection error. Please try again.');
-            // });
-
-            // Temporary demo - remove this when implementing backend
         });
 
         // Error message functions
