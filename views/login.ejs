@@ -12,11 +12,19 @@
             box-sizing: border-box;
         }
 
+        html {
+            height: -webkit-fill-available;
+            background: #0f0722; /* Fallback solid color */
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f0722; /* Solid fallback */
             background: linear-gradient(135deg, #2d1b69 0%, #1a0f3d 50%, #0f0722 100%);
+            background-attachment: fixed; /* Force background to stick */
             min-height: 100vh;
-            min-height: -webkit-fill-available; /* iOS Safari fix */
+            min-height: -webkit-fill-available;
+            height: 100%;
             color: #e8e4f0;
             display: flex;
             flex-direction: column;
@@ -24,11 +32,6 @@
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* iOS Safari viewport fix */
-        html {
-            height: -webkit-fill-available;
         }
 
         /* Subtle background pattern for focus */
@@ -255,6 +258,12 @@
 
         /* iOS Safari specific fixes */
         @supports (-webkit-touch-callout: none) {
+            html, body {
+                background: #0f0722 !important; /* Force solid background on iOS */
+                background-image: linear-gradient(135deg, #2d1b69 0%, #1a0f3d 50%, #0f0722 100%) !important;
+                background-attachment: fixed !important;
+            }
+            
             .form-input {
                 background: rgba(138, 43, 226, 0.15); /* Slightly more opaque for iOS */
             }
