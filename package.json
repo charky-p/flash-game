@@ -18,6 +18,8 @@
   "homepage": "https://github.com/charky-p/flash-game#readme",
   "keywords": [],
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-session": "^1.18.1"

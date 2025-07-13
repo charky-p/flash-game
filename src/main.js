@@ -1,5 +1,5 @@
-const { json } = require('express');
 const { getData } = require('./dataStore');
+const bcrypt = require('bcrypt');
 
 const DEFAULT_XP = 10;
 const ONE_DAY = 24 * 60 * 60 * 1000; // milliseconds in a day
@@ -13,18 +13,28 @@ function getUser(userName) {
  * Login/register user
  * @returns null if invalid login, otherwise the user
  */
-function loginUser(name, password) {
+async function loginUser(name, password) {
     const data = getData();
-    const user = data.users.find(user => user.name === name);
+    const user = getUser(name);
     if (!user) {
-        const newUser = { name: name, password: password, group: null, xp: 0, streak: 0, flashcardAttempts: [], 
+        const hash = await hashedPassword(password);
+        const newUser = { name: name, password: hash, group: null, xp: 0, streak: 0, flashcardAttempts: [], 
             flashcardsCreated: 0, badges: [] };
         data.users.push(newUser);
         return newUser;
-    } else if (password === user.password) {
-        return user;
+    } else {
+        const match = await bcrypt.compare(password, user.password);
+        if (match) {
+            return user;
+        }
     }
     return null;
+}
+
+async function hashedPassword(password) {
+    const salt = await bcrypt.genSalt(5);
+    const hash = await bcrypt.hash(password, salt);
+    return hash;
 }
 
 function createGroup(groupName, userName) {

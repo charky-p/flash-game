@@ -2,7 +2,7 @@ const { getData } = require('./dataStore.js');
 const express = require('express');
 const main = require('./main.js');
 const path = require('path');
-
+require('dotenv').config();
 const app = express();
 const session = require('express-session');
 
@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
-	secret: 'hardcoded-bad-secret-for-game-jam-demo',
+	secret: process.env.SESSION_SECRET,
   	resave: false,
 	saveUninitialized: false,
 	cookie: { secure: false }
@@ -25,18 +25,14 @@ app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-// TO BE REMOVED
-app.get('/viewdata', (req, res) => {
-    res.send(getData());
-})
+
 app.get('/', (req, res) => {
     res.render('login');
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-
-    if (main.loginUser(username, password) != null ) {
+    if (await main.loginUser(username, password) != null ) {
         req.session.user = username;
         res.json({success: true});
     } else {
